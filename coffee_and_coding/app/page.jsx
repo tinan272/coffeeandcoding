@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { Search } from './components/Search.jsx';
 import { GoogleMap } from './components/GoogleMap.jsx';
+import { PopUp } from './components/PopUp.jsx';
 
 export default function Home() {
 	const [searchValue, setSearchValue] = useState("Atlanta, GA");
@@ -58,11 +59,18 @@ export default function Home() {
         }}
       > 
         <Grid container spacing={2}>
-          <Grid item xs={2}>
-		  	<Search onEnterPress={handleEnterPress} />
+          <Grid item xs={4}>
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+		  	        <Search onEnterPress={handleEnterPress} />
+              </Grid>
+              <Grid item xs={12} style={{ height: '100%' }}>
+		  	        <PopUp />
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={1}>
-		  	<GoogleMap searchValue={searchValue} />
+          <Grid item xs={8}>
+		  	    <GoogleMap searchValue={searchValue} />
           </Grid>
         </Grid>
       </Box>
