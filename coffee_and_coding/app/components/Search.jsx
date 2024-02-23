@@ -23,6 +23,7 @@ export const Search = ( {onEnterPress} ) => {
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleEnterPress}
+            fullWidth
             />
         </div>
     )
