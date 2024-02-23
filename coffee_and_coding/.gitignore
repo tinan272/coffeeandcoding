@@ -37,3 +37,7 @@ next-env.d.ts
 
 # map api key
 .env.local
+
+# package
+package.json
+package-lock.json
