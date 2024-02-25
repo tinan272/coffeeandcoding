@@ -1,24 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
-export const GoogleMap = ({ searchValue }) => {
-    return (
-        <div id="map">
-            <iframe
-                title={`Map`}
-                width="900"
-                height="500"
-                frameBorder="0"
-                style={{ border: 0 }}
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_API_Key}&q=${searchValue}`}
-                allowFullScreen
-            >
-            </iframe>
-        </div>
-    );
+const MapContainer = ({ searchValue }) => {
+  const defaultCenter = { lat: 40.7128, lng: -74.0060 }; // Default center coordinates
+
+  return (
+    <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_API_Key}>
+      <GoogleMap
+        mapContainerStyle={{ width: '100%', height: '500px' }}
+        center={defaultCenter}
+        zoom={10}
+      >
+        {/* Marker component */}
+        <Marker position={defaultCenter} title="Your Marker Title" />
+
+      </GoogleMap>
+    </LoadScript>
+  );
 }
 
-GoogleMap.propTypes = {
-    searchValue: PropTypes.string.isRequired,
+
+MapContainer.propTypes = {
+  searchValue: PropTypes.string.isRequired,
 };
+
+export default MapContainer;
