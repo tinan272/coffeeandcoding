@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 export const GoogleMap = ({ searchValue }) => {
     return (
@@ -13,11 +13,10 @@ export const GoogleMap = ({ searchValue }) => {
                 referrerPolicy="no-referrer-when-downgrade"
                 src={`https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_API_Key}&q=${searchValue}`}
                 allowFullScreen
-            >
-            </iframe>
+            ></iframe>
         </div>
     );
-}
+};
 
 GoogleMap.propTypes = {
     searchValue: PropTypes.string.isRequired,
