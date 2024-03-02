@@ -2,22 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 
 export const GoogleMap = ({ searchValue }) => {
+    const defaultCenter = { lat: 40.7128, lng: -74.006 }; // Default center coordinates
+
     return (
-        <div id="map">
-            <iframe
-                title={`Map`}
-                width="900"
-                height="500"
-                frameBorder="0"
-                style={{ border: 0 }}
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_API_Key}&q=${searchValue}`}
-                allowFullScreen
-            ></iframe>
-        </div>
+        <iframe
+            src="https://www.google.com/maps/d/u/0/embed?mid=1Uh86O1UhVd_o2CAd5cm_FTQQlTTbrFM&ehbc=2E312F"
+            width="640"
+            height="480"
+        ></iframe>
     );
 };
 
-GoogleMap.propTypes = {
-    searchValue: PropTypes.string.isRequired,
-};
+// MapContainer.propTypes = {
+//     searchValue: PropTypes.string.isRequired,
+// };

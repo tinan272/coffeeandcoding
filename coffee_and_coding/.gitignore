@@ -39,5 +39,8 @@ next-env.d.ts
 .env.local
 
 # package
-package.json
-package-lock.json
+/package-lock.json
+/package.json
+
+../.DS_Store
+coffee_and_coding/.gitignore
