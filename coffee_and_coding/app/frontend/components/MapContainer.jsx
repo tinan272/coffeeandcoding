@@ -1,9 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker} from "@react-google-maps/api";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
+
+
 const libraries = ["places"];
 const mapContainerStyle = {
     height: "100vh",
@@ -14,11 +16,28 @@ export const MapContainer = ({
     coffeeMarkers,
     handlePlaceClicked,
 }) => {
-    const [selectedMarker, setSelectedMarker] = useState("");
+    const [markers, setMarkers] = useState([]);
+    const [selectedMarker, setSelectedMarker] = useState(null);
     const handleMarkerClick = (event, place) => {
         console.log(place);
         handlePlaceClicked(place);
     };
+
+    useEffect(() => {
+      const newMarkers = coffeeMarkers.map((place, index) => ({
+        id: index,
+        position: {lat: place.lat, lng: place.lng },
+      }));
+
+      if (searchValue) {
+        newMarkers.push({
+          id: "search",
+          position: searchValue,
+        });
+      }
+      setMarkers(newMarkers);
+    }, [searchValue, coffeeMarkers]);
+
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_API_Key,
         libraries,

@@ -3,13 +3,13 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { Search } from "./frontend/components/Search.jsx";
-import { GoogleMap } from "./frontend/components/GoogleMap.jsx";
-import { PopUp } from "./frontend/components/PopUp.jsx";
+import { Search } from "./components/Search.jsx";
+import { GoogleMap } from "./components/GoogleMap.jsx";
+import { PopUp } from "./components/PopUp.jsx";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Fade from "@mui/material/Fade";
-import { MapContainer } from "./frontend/components/MapContainer.jsx";
+import { MapContainer } from "./components/MapContainer.jsx";
 
 const coffeeMarkers = [
     { lat: 37.7749, lng: -122.4194 }, // San Francisco, CA
