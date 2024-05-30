@@ -1,30 +1,35 @@
-// "use client";
-// import React, { useState } from "react";
-// import TextField from "@mui/material/TextField";
+"use client";
+import React, { useState } from "react";
+import TextField from "@mui/material/TextField";
 
-// export const Search = ({ onEnterPress }) => {
-//     const [inputValue, setInputValue] = useState("");
-//     const handleInputChange = (event) => {
-//         setInputValue(event.target.value);
-//     };
-//     const handleEnterPress = (event) => {
-//         if (event.key === "Enter") {
-//             console.log("enter pressed");
-//             onEnterPress(inputValue);
-//         }
-//     };
+export const Search = ({ searchValueSetter }) => {
+    const [inputValue, setInputValue] = useState("");
+    const handleInputChange = (event) => {
+        setInputValue(event.target.value);
+    };
+    const handleEnterPress = (event) => {
+        if (event.key === "Enter") {
+            console.log("enter pressed");
+            onEnterPress(inputValue);
+        }
+    };
 
-//     return (
-//         <div id="search-box">
-//             <TextField
-//                 // required
-//                 id="outlined-required"
-//                 label="Search Box"
-//                 value={inputValue}
-//                 onChange={handleInputChange}
-//                 onKeyDown={handleEnterPress}
-//                 fullWidth
-//             />
-//         </div>
-//     );
-// };
+    const onEnterPress = (inputValue) => {
+        searchValueSetter(inputValue);
+    };
+
+    return (
+        <div id="search-box">
+            <TextField
+                sx={{ m: 1, width: "100%" }}
+                id="outlined-required"
+                label="Search"
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleEnterPress}
+                // required
+                // fullWidth
+            />
+        </div>
+    );
+};
