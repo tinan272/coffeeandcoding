@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { Search } from "./components/Search.jsx";
-import MapContainer from "./components/MapContainer.jsx";
-import { ShopListDisplay } from "./components/ShopListDisplay.jsx";
+import { Search } from "./frontend/components/Search.jsx";
+import MapContainer from "./frontend/components/MapContainer.jsx";
+import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
+import { useRouter } from "next/router";
 
 // flex-col = each subsequent div is a column
 // each grid row has a full length of 12 units. to do 50% of each, xs={6} for both
