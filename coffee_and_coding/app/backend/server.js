@@ -1,6 +1,12 @@
 const connectMongdoDB = require("./dbconn.js");
 const express = require("express");
 const app = express();
+var cors = require('cors')
+
+var cafes = require('./cafeRoute.js');
+
+app.use(express.json());
+app.use(cors());
 
 async function startServer() {
     try {
@@ -10,10 +16,9 @@ async function startServer() {
             console.log("server running on port 8080");
         });
 
-        const database = await client.db("coffee_shop_data");
-        const collection = await database.collection("coffee_info");
-        const documents = await collection.find().toArray();
-        console.log("Retrieved documents:", documents);
+        const cafeRouter = await cafes.getCafes(client);
+        app.use('/cafe_api', cafeRouter);
+
     } catch (error) {
         console.log("Error starting server", error);
     }
