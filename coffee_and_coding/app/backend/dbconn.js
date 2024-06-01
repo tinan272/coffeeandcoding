@@ -23,17 +23,10 @@ async function connectMongoDB() {
         console.log(
             "Pinged your deployment. You successfully connected to MongoDB!"
         );
-
-        const database = await client.db("coffee_shop_data");
-        const collection = await database.collection("coffee_info");
-        const documents = await collection.find().toArray();
-        console.log("Retrieved documents:", documents);
         return client;
-    } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+    } catch(error) {
+        console.error("error connecting to MongoDB:", error);
+        throw error;
     }
 }
-connectMongoDB().catch(console.dir);
-
 module.exports = connectMongoDB;
