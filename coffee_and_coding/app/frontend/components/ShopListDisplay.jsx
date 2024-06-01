@@ -10,6 +10,7 @@ import { Search } from "./Search.jsx";
 import Stack from "@mui/material/Stack";
 import { SelectMulti } from "./SelectMulti.jsx";
 import Box from "@mui/material/Box";
+import axios from "axios";
 
 export const ShopListDisplay = ({}) => {
     const staticShops = [
@@ -40,6 +41,11 @@ export const ShopListDisplay = ({}) => {
 
     const [areaName, setAreaName] = useState([]);
     const [cafeScore, setCafeScore] = useState([]);
+    const [cafeInfo, setCafe] = useState([]);
+
+    useEffect(() => {
+
+    })
 
     // filter based on the cafe name that is set by Search comp.
     const filteredShops = staticShops.filter((shop) => {
@@ -91,4 +97,15 @@ export const ShopListDisplay = ({}) => {
             </Paper>
         </div>
     );
+
+    async function getCafeInfo() {
+        try {
+            const response = await axios.get("http://localhost:8080/cafe_api");
+            const cafeData = response.data;
+            const cafes = cafeData.map((cafe) => ({
+                name: cafe.name,
+                address: cafe.address
+            }))
+        }
+    }
 };
