@@ -2,14 +2,16 @@
 import React, { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import Paper from "@mui/material/Paper";
-import { ListSubheader } from "@mui/material";
+import { Button, ListSubheader } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { Search } from "./Search.jsx";
 import { SelectMulti } from "./SelectMulti.jsx";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import axios from "axios";
+import MapContainer from "./MapContainer.jsx";
 
 export const ShopListDisplay = ({}) => {
     const staticShops = [
@@ -61,42 +63,27 @@ export const ShopListDisplay = ({}) => {
     });
 
     return (
-        <div>
-            <Paper sx={{ m: 1, height: "100%", p: 2 }} elevation={4}>
-                <Box>
-                    <Search searchValueSetter={setSearchValue} />
-                    <SelectMulti
-                        list={names}
-                        labelName={"Areas"}
-                        filterValue={areaName}
-                        setter={setAreaName}
-                    />
-                    <SelectMulti
-                        list={cost}
-                        labelName={"Cost"}
-                        filterValue={cafeCost}
-                        setter={setcafeCost}
-                    />
-                </Box>
-                <List>
-                    <ListSubheader>Coffee Shops</ListSubheader>
-
-                    {filteredShops.map((cafe, index) => (
-                        <ListItemButton key={cafe.name}>
-                            <ListItem
-                                sx={{ borderBottom: 1, borderColor: "divider" }}
-                            >
-                                <ListItemText
-                                    primary={cafe.name}
-                                    secondary={cafe.address}
-                                />
-                                {cafe.cost}
-                            </ListItem>
-                        </ListItemButton>
-                    ))}
-                </List>
-            </Paper>
-        </div>
+        <Paper>
+            <List>
+                <ListSubheader>Coffee Shops</ListSubheader>
+                {staticShops.map((cafe, index) => (
+                    <ListItemButton key={cafe.name}>
+                        <ListItem
+                            sx={{
+                                borderBottom: 1,
+                                borderColor: "divider",
+                            }}
+                        >
+                            <ListItemText
+                                primary={cafe.name}
+                                secondary={cafe.address}
+                            />
+                            {cafe.cost}
+                        </ListItem>
+                    </ListItemButton>
+                ))}
+            </List>
+        </Paper>
     );
 
     async function getCafeInfo() {
