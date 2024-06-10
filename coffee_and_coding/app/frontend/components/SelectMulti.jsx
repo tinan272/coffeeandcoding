@@ -20,8 +20,8 @@ export const SelectMulti = ({ list, labelName, filterValue, setter }) => {
     };
 
     return (
-        <div>
-            <FormControl sx={{ m: 1, width: "100%" }}>
+        <div className="flex justify-center">
+            <FormControl sx={{ m: 0, width: "100%" }}>
                 <InputLabel id="demo-multiple-name-label">
                     {labelName}
                 </InputLabel>
