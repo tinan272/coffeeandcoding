@@ -4,10 +4,10 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import MapContainer from "./frontend/components/MapContainer.jsx";
 import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
-import { QueryParamProvider } from 'use-query-params'; // Import QueryParamProvider here
+import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-//import {useRouter} from "next/router";
+import {useRouter} from "next/router";
 
 export default function Home() {
     return (
