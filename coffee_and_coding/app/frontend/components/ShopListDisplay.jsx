@@ -106,8 +106,6 @@ export const ShopListDisplay = ({}) => {
         <div>
             <Paper sx={{ m: 1, height: "100%", p: 2 }} elevation={4}>
                 <Box>
-                    <Search searchValueSetter={handleSearch} />
-
                     <SelectMulti
                         list={names}
                         labelName={"Areas"}
