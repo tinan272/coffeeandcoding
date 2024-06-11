@@ -2,18 +2,16 @@
 import React, { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import Paper from "@mui/material/Paper";
-import { Button, ListSubheader } from "@mui/material";
+import { ListSubheader } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import { Search } from "./Search.jsx";
-import { SelectMulti } from "./SelectMulti.jsx";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import axios from "axios";
-import MapContainer from "./MapContainer.jsx";
 
-export const ShopListDisplay = ({}) => {
+export const ShopListDisplay = ({
+    selectedFilterOptions,
+    selectedSortOption,
+}) => {
     const staticShops = [
         { name: "Cafe Comma", description: "Good", area: "Atlanta", score: 4 },
         {
@@ -37,9 +35,6 @@ export const ShopListDisplay = ({}) => {
     ];
 
     const [searchValue, setSearchValue] = useState("");
-    const names = ["Atlanta", "Buckhead", "Marietta", "Roswell"];
-    const cost = ["$", "$$", "$$$"];
-
     const [areaName, setAreaName] = useState([]);
     const [cafeCost, setcafeCost] = useState([]);
     const [cafeInfo, setCafeInfo] = useState([]);
@@ -65,7 +60,16 @@ export const ShopListDisplay = ({}) => {
     return (
         <Paper>
             <List>
-                <ListSubheader>Coffee Shops</ListSubheader>
+                <ListSubheader>
+                    <div className="font-bold m-0 p-0">Coffee Shops</div>
+                    {selectedFilterOptions}
+                    <br />
+                    {selectedSortOption == 0
+                        ? "Cost"
+                        : selectedSortOption == 1
+                        ? "Rating"
+                        : null}
+                </ListSubheader>
                 {staticShops.map((cafe, index) => (
                     <ListItemButton key={cafe.name}>
                         <ListItem
