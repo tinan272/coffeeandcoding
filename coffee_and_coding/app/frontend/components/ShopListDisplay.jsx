@@ -2,20 +2,17 @@
 import React, { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import Paper from "@mui/material/Paper";
-import { Button, ListSubheader } from "@mui/material";
+import { Button, ListSubheader, ThemeProvider } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import { Search } from "./Search.jsx";
 import { SelectMulti } from "./SelectMulti.jsx";
-import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import axios from "axios";
-import MapContainer from "./MapContainer.jsx";
 import { useQueryParams, NumberParam, StringParam, ArrayParam} from 'use-query-params';
+import theme from "./theme.jsx";
 
-export const ShopListDisplay = ({}) => {
+export const ShopListDisplay = ( { searchInputValue }) => {
     const staticShops = [
         { name: "Cafe Comma", description: "Good", area: "Atlanta", score: 4 },
         {
@@ -46,11 +43,6 @@ export const ShopListDisplay = ({}) => {
     
     // setting filter/search bar values
     const [cafeInfo, setCafeInfo] = useState([]);
-    const [init_searchValue, setSearchValue] = useState("");
-    const [init_areaName, setAreaName] = useState([]);
-    const [init_cafeCost, setcafeCost] = useState([]);
-    const [init_cafeRating, setCafeRating] = useState([]);
-    const [init_cafeParking, setCafeParking] = useState([]);
 
     // for syncing query parameters in real time & sending to backend server
     const [query, setQuery] = useQueryParams({
@@ -60,7 +52,8 @@ export const ShopListDisplay = ({}) => {
         rating: ArrayParam,
         parking: ArrayParam,
     });
-    const { search: searchValue, city: areaName, cost: cafeCost, rating: cafeRating, parking: cafeParking } = query || {};
+
+    const {  city: areaName, cost: cafeCost, rating: cafeRating, parking: cafeParking } = query || {};
     console.log("this is the query", query);
 
     // getting cafe info and setting it 
@@ -70,8 +63,12 @@ export const ShopListDisplay = ({}) => {
         });
     }, [query]);
 
-    const handleSearch = (searchValue) => {
-        setQuery({ search: searchValue });
+    useEffect(() => {
+        handleSearch(searchInputValue);
+    });
+
+    const handleSearch = (inputValue) => {
+        setQuery({ search: inputValue });
     };
 
     const handleCity = (selectedCities) => {
@@ -90,6 +87,13 @@ export const ShopListDisplay = ({}) => {
         setQuery({ parking: selectedParking });
     };
 
+
+    // clearing the dropdown menus
+    function onClear() {
+        console.log("Clearing filters...");
+        setQuery({ search: "", city: [], cost: [], rating: [], parking: []});
+    };
+
     // filter based on the cafe name that is set by Search comp.
     // const filteredShops = cafeInfo.filter((shop) => {
     //     const matchesName = shop.name
@@ -106,11 +110,23 @@ export const ShopListDisplay = ({}) => {
         <div>
             <Paper sx={{ m: 1, height: "100%", p: 2 }} elevation={4}>
                 <Box>
+                <ThemeProvider theme={theme}>
+                    <Button
+                            sx={{ margin: '15px'}}
+                            color="pink"
+                            variant="contained"
+                            onClick={onClear}
+                    >
+                        Clear Filters
+                    </Button>
+                </ThemeProvider>
+
                     <SelectMulti
                         list={names}
                         labelName={"Areas"}
                         filterValue={areaName || []}
-                        setter={handleCity}                        
+                        setter={handleCity}
+                                                
                     />
                     <SelectMulti
                         list={cost}
@@ -129,8 +145,7 @@ export const ShopListDisplay = ({}) => {
                         list={parkingList}
                         labelName={"Parking"}
                         filterValue={cafeParking || []}
-                        setter={handleParking}
-                        
+                        setter={handleParking}                        
                     />
                 </Box>
                 <List>

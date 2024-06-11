@@ -12,21 +12,40 @@ async function getCafes(client) {
 
     router.get('/', async (req, res) => {
         try {
-            const search = req.query.search;
-            const city = req.query.city;
-            const cost = req.query.cost;
-            const rating = req.query.rating;
-            const parking = req.query.parking;
+            const filters = {
+                search: req.query.search,
+                city: req.query.city,
+                cost: req.query.cost,
+                parking: req.query.parking,
+            }
+
+            //const pipeline = [];
 
             console.log("Query Parameters:");
-            console.log("Search:", search);
-            console.log("City:", city);
-            console.log("Cost:", cost);
-            console.log("Rating:", rating);
-            console.log("Parking:", parking);
+            console.log("Search:", filters.search);
+            console.log("City:", filters.city);
+            console.log("Cost:", filters.cost);
+            console.log("Parking:", filters.parking);
 
             console.log("router working");
-            
+
+            // if (filters.search) {
+            //     pipeline.push({ $match: { "Name": filters.search } });
+            // }
+            // if (filters.city) {
+            //     pipeline.push({ $match: { "Area": filters.city } });
+            // }
+            // if (filters.cost) {
+            //     pipeline.push({ $match: { "Cost": filters.cost } });
+            // }
+            // if (filters.parking) {
+            //     pipeline.push({ $match: { "Parking": filters.parking } });
+            // }
+
+            const filteredResults = await collection.aggregate([
+                { $match: { "Area": filters.city } },
+            ]).toArray();
+            console.log("filtered results", filteredResults);
             res.send(documents);
         } catch (error) {
             console.log("error getting documents", error);
