@@ -19,9 +19,9 @@ export const Search = ({ searchValueSetter }) => {
     };
 
     return (
-        <div id="search-box">
+        <div id="search-box" className="flex justify-center">
             <TextField
-                sx={{ m: 1, width: "100%" }}
+                sx={{ m: 1, width: "30%" }}
                 id="outlined-required"
                 label="Search"
                 value={inputValue}
