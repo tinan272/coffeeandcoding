@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import MapContainer from "./frontend/components/MapContainer.jsx";
-import { Button, ListSubheader } from "@mui/material";
+import { Button, ListItemButton, ListSubheader } from "@mui/material";
 import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
+import { DisplayOptions } from "./frontend/components/DisplayOptions.jsx";
 import background_img from "../public/background_img.jpg";
 import Grid from "@mui/material/Grid";
 import Image from "next/image";
@@ -12,7 +13,6 @@ import { IconButton } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { Search } from "./frontend/components/Search.jsx";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { SelectMulti } from "./frontend/components/SelectMulti.jsx";
 
 // flex-col = each subsequent div is a column
 // each grid row has a full length of 12 units. to do 50% of each, xs={6} for both
@@ -27,12 +27,25 @@ export default function Home() {
             },
         },
     });
+    const [open, setOpen] = React.useState(0);
+    const [filterType, setFilterType] = useState(0); // State to track the filter type (sorting or filtering)
+    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null); // track selected filters to pass into ShopListDisplay
+    const [selectedSortOption, setSelectedSortOption] = useState(null);
+
+    const handleFilterClick = (type) => {
+        setFilterType(type);
+        setOpen(true);
+    };
+
+    const handleFilterClose = () => {
+        setOpen(false);
+    };
 
     const [searchValue, setSearchValue] = useState("");
     const router = useRouter();
 
     return (
-        <main className="relative flex min-h-screen flex-col justify-between">
+        <main className="relative flex min-h-screen flex-col justify-center">
             <div className="relative bg-white">
                 <Image
                     alt="Background"
@@ -102,6 +115,7 @@ export default function Home() {
                                         sx={{ width: "10%" }}
                                         color="pink"
                                         variant="contained"
+                                        onClick={() => handleFilterClick(0)}
                                     >
                                         Sort
                                     </Button>
@@ -109,13 +123,19 @@ export default function Home() {
                                         color="pink"
                                         variant="contained"
                                         sx={{ width: "10%" }}
+                                        onClick={() => handleFilterClick(1)}
                                     >
                                         Filter
                                     </Button>
                                 </div>
                             </Grid>
                             <Grid item xs={6}>
-                                <ShopListDisplay />
+                                <ShopListDisplay
+                                    selectedFilterOptions={
+                                        selectedFilterOptions
+                                    }
+                                    selectedSortOption={selectedSortOption}
+                                />
                             </Grid>
                             <Grid item xs={6}>
                                 <MapContainer />
@@ -124,6 +144,15 @@ export default function Home() {
                     </Box>
                 </div>
             </ThemeProvider>
+            <div>
+                <DisplayOptions
+                    type={filterType}
+                    openView={open}
+                    handleClose={handleFilterClose}
+                    setSelectedFilterOptions={setSelectedFilterOptions} // ex: "Atlanta, $$"
+                    setSelectedSortOption={setSelectedSortOption} // "Rating"
+                />
+            </div>
         </main>
     );
 }
