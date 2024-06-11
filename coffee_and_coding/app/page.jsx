@@ -1,35 +1,130 @@
 "use client";
-import React from "react";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import React, { useState, useEffect } from "react";
 import MapContainer from "./frontend/components/MapContainer.jsx";
+import { Button, ListSubheader } from "@mui/material";
 import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
+import background_img from "../public/background_img.jpg";
+import Grid from "@mui/material/Grid";
+import Image from "next/image";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Box from "@mui/material/Box";
+import { IconButton } from "@mui/material";
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
+import { Search } from "./frontend/components/Search.jsx";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { SelectMulti } from "./frontend/components/SelectMulti.jsx";
 
 export default function Home() {
+    const theme = createTheme({
+        palette: {
+            pink: {
+                main: "#F08E80",
+                light: "#FDF0E6",
+                dark: "#F4AC9F",
+                contrastText: "#242105",
+            },
+        },
+    });
+
+    const [searchValue, setSearchValue] = useState("");
+    const router = useRouter();
+
     return (
-        <BrowserRouter>
-            <QueryParamProvider adapter={ReactRouter6Adapter}>
-                <main className="flex min-h-screen flex-col justify-between p-24">
-                    <div className="relative h-32 w-32">
-                        <div className="text-lg absolute left-0 top-0 h-0 w-100">
-                            Atlanta Coffee
+        <main className="relative flex min-h-screen flex-col justify-between">
+            <div className="relative bg-white">
+                <Image
+                    alt="Background"
+                    src={background_img}
+                    style={{
+                        height: "83vh",
+                        width: "100%",
+                        opacity: "50%",
+                    }}
+                ></Image>
+
+                <div className="flex absolute top-0 w-full p-24 items-end">
+                    <div
+                        className="flex-auto font-light text-6xl left-0 w-200"
+                        id="title"
+                    >
+                        coffee&coding
+                    </div>
+                    <div className="flex-none w-60 left-0 font-thin text-xl">
+                        <div className="flex justify-end justify-around">
+                            <div>
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/blog")}
+                                >
+                                    Blog
+                                </button>
+                            </div>
+                            <div>
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/about")}
+                                >
+                                    About Us
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]"></div>
-                    <Grid container spacing={2} p={0}>
-                        <Grid item xs={6}>
-                            <ShopListDisplay />
+                </div>
+                <div></div>
+            </div>
+            <div className="flex-col py-8 text-center w-100 text-5xl font-light">
+                <div>Coffee Shop Map</div>
+                <div>
+                    <IconButton
+                        sx={{ color: "black" }}
+                        onClick={() => {
+                            document
+                                .getElementById("map")
+                                .scrollIntoView({ behavior: "smooth" });
+                        }}
+                    >
+                        <KeyboardArrowDownIcon fontSize="large" />
+                    </IconButton>
+                </div>
+            </div>
+            <ThemeProvider theme={theme}>
+                <div id="map" className="mx-24 mb-24">
+                    <Box display="flex" justifyItems="justify-items-center">
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Search searchValueSetter={setSearchValue} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <div className="flex justify-center space-x-4 ">
+                                    <Button
+                                        sx={{ width: "10%" }}
+                                        color="pink"
+                                        variant="contained"
+                                    >
+                                        Sort
+                                    </Button>
+                                    <Button
+                                        color="pink"
+                                        variant="contained"
+                                        sx={{ width: "10%" }}
+                                    >
+                                        Filter
+                                    </Button>
+                                </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <ShopListDisplay />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <MapContainer />
+                            </Grid>
                         </Grid>
-                        <Grid item xs={6}>
-                            <MapContainer />
-                        </Grid>
-                    </Grid>
-                </main>
-            </QueryParamProvider>
-        </BrowserRouter>
+                    </Box>
+                </div>
+            </ThemeProvider>
+        </main>
     );
 }
