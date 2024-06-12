@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MapContainer from "./frontend/components/MapContainer.jsx";
 import { Button, ListItemButton, ListSubheader } from "@mui/material";
 import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
@@ -10,12 +10,14 @@ import Image from "next/image";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Box from "@mui/material/Box";
 import { IconButton } from "@mui/material";
+import { QueryParamProvider } from 'use-query-params';
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
+import { BrowserRouter } from 'react-router-dom';
 import { useRouter } from "next/navigation";
 import { Search } from "./frontend/components/Search.jsx";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-
-// flex-col = each subsequent div is a column
-// each grid row has a full length of 12 units. to do 50% of each, xs={6} for both
+import { createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./frontend/components/theme.jsx"; 
 export default function Home() {
     const theme = createTheme({
         palette: {
@@ -44,65 +46,67 @@ export default function Home() {
     const [searchValue, setSearchValue] = useState("");
     const router = useRouter();
 
-    return (
-        <main className="relative flex min-h-screen flex-col justify-center">
+  return (
+    <BrowserRouter>
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <ThemeProvider theme={theme}>
+          <main className="relative flex min-h-screen flex-col justify-between">
             <div className="relative bg-white">
-                <Image
-                    alt="Background"
-                    src={background_img}
-                    style={{
-                        height: "83vh",
-                        width: "100%",
-                        opacity: "50%",
-                    }}
-                ></Image>
+              <Image
+                alt="Background"
+                src={background_img}
+                style={{
+                  height: "83vh",
+                  width: "100%",
+                  opacity: "50%",
+                }}
+              ></Image>
 
-                <div className="flex absolute top-0 w-full p-24 items-end">
-                    <div
-                        className="flex-auto font-light text-6xl left-0 w-200"
-                        id="title"
-                    >
-                        coffee&coding
-                    </div>
-                    <div className="flex-none w-60 left-0 font-thin text-xl">
-                        <div className="flex justify-end justify-around">
-                            <div>
-                                <button
-                                    type="button"
-                                    onClick={() => router.push("/blog")}
-                                >
-                                    Blog
-                                </button>
-                            </div>
-                            <div>
-                                <button
-                                    type="button"
-                                    onClick={() => router.push("/about")}
-                                >
-                                    About Us
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+              <div className="flex absolute top-0 w-full p-24 items-end">
+                <div
+                  className="flex-auto font-light text-6xl left-0 w-200"
+                  id="title"
+                >
+                  coffee&coding
                 </div>
-                <div></div>
+                <div className="flex-none w-60 left-0 font-thin text-xl">
+                  <div className="flex justify-end justify-around">
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => router.push("/blog")}
+                      >
+                        Blog
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => router.push("/about")}
+                      >
+                        About Us
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div></div>
             </div>
             <div className="flex-col py-8 text-center w-100 text-5xl font-light">
-                <div>Coffee Shop Map</div>
-                <div>
-                    <IconButton
-                        sx={{ color: "black" }}
-                        onClick={() => {
-                            document
-                                .getElementById("map")
-                                .scrollIntoView({ behavior: "smooth" });
-                        }}
-                    >
-                        <KeyboardArrowDownIcon fontSize="large" />
-                    </IconButton>
-                </div>
+              <div>Coffee Shop Map</div>
+              <div>
+                <IconButton
+                  sx={{ color: "black" }}
+                  onClick={() => {
+                    document
+                      .getElementById("map")
+                      .scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  <KeyboardArrowDownIcon fontSize="large" />
+                </IconButton>
+              </div>
             </div>
-            <ThemeProvider theme={theme}>
                 <div id="map" className="mx-24 mb-24">
                     <Box display="flex" justifyItems="justify-items-center">
                         <Grid container spacing={2}>
@@ -143,7 +147,6 @@ export default function Home() {
                         </Grid>
                     </Box>
                 </div>
-            </ThemeProvider>
             <div>
                 <DisplayOptions
                     type={filterType}
@@ -154,5 +157,8 @@ export default function Home() {
                 />
             </div>
         </main>
+        </ThemeProvider>
+      </QueryParamProvider>
+    </BrowserRouter>
     );
 }

@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 
-export const Search = ({ searchValueSetter }) => {
+export const Search = ({ searchValueSetter}) => {
+
     const [inputValue, setInputValue] = useState("");
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
