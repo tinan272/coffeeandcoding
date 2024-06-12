@@ -2,15 +2,21 @@
 import React, { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import Paper from "@mui/material/Paper";
-import { ListSubheader } from "@mui/material";
+import { Button, ListSubheader, ThemeProvider } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import axios from "axios";
+import { useQueryParams, NumberParam, StringParam, ArrayParam} from 'use-query-params';
+import { SelectMulti } from "./SelectMulti.jsx";
+import Box from "@mui/material/Box";
+import theme from "./theme.jsx";
 
 export const ShopListDisplay = ({
     selectedFilterOptions,
     selectedSortOption,
+    searchInputValue
+  
 }) => {
     const staticShops = [
         { name: "Cafe Comma", description: "Good", area: "Atlanta", score: 4 },
@@ -37,28 +43,84 @@ export const ShopListDisplay = ({
     const [searchValue, setSearchValue] = useState("");
     const [areaName, setAreaName] = useState([]);
     const [cafeCost, setcafeCost] = useState([]);
+    
+    // setting filter/search bar values
     const [cafeInfo, setCafeInfo] = useState([]);
 
-    useEffect(() => {
-        getCafeInfo().then((cafeData) => {
-            setCafeInfo(cafeData);
-        });
-    }, []);
-
-    // filter based on the cafe name that is set by Search comp.
-    const filteredShops = cafeInfo.filter((shop) => {
-        const matchesName = shop.name
-            .toLowerCase()
-            .includes(searchValue.toLowerCase());
-        const matchesArea =
-            areaName.length === 0 || shop.address.includes(areaName); // === 0 shows everything if no filter set
-        const matchesCost =
-            cafeCost.length === 0 || cafeCost.includes(shop.cost);
-        return matchesName && matchesCost && matchesArea;
+    // for syncing query parameters in real time & sending to backend server
+    const [query, setQuery] = useQueryParams({
+        search: StringParam,
+        city: ArrayParam,
+        cost: ArrayParam,
+        rating: ArrayParam,
+        parking: ArrayParam,
     });
 
+    const {  city: areaName, cost: cafeCost, rating: cafeRating, parking: cafeParking } = query || {};
+    console.log("this is the query", query);
+
+    // getting cafe info and setting it 
+    useEffect(() => {
+        getCafeInfo(query).then((cafeData) => {
+            setCafeInfo(cafeData);
+        });
+    }, [query]);
+
+    useEffect(() => {
+        handleSearch(searchInputValue);
+    });
+
+    const handleSearch = (inputValue) => {
+        setQuery({ search: inputValue });
+    };
+
+    const handleCity = (selectedCities) => {
+        setQuery({ city: selectedCities });
+    };
+
+    const handleCost = (selectedCost) => {
+        setQuery({ cost: selectedCost });
+    };
+
+    const handleRating = (selectedRating) => {
+        setQuery({ rating: selectedRating });
+    };
+
+    const handleParking = (selectedParking) => {
+        setQuery({ parking: selectedParking });
+    };
+
+
+    // clearing the dropdown menus
+    function onClear() {
+        console.log("Clearing filters...");
+        setQuery({ search: "", city: [], cost: [], rating: [], parking: []});
+    };
+
+    // filter based on the cafe name that is set by Search comp.
+    // const filteredShops = cafeInfo.filter((shop) => {
+    //     const matchesName = shop.name
+    //         .toLowerCase()
+    //         .includes(searchValue.toLowerCase());
+    //     const matchesArea =
+    //         areaName.length === 0 || areaName.includes(shop.area); // === 0 shows everything if no filter set
+    //     const matchesCost =
+    //         cafeCost.length === 0 || cafeCost.includes(shop.cost);
+    //     return matchesName && matchesCost && matchesArea;
+    // });
+
     return (
-        <Paper>
+        <Paper elevation={4}>
+                 <ThemeProvider theme={theme}>
+                    <Button
+                            sx={{ margin: '15px'}}
+                            color="pink"
+                            variant="contained"
+                            onClick={onClear}
+                    >
+                        Clear Filters
+                    </Button>
+                </ThemeProvider>
             <List>
                 <ListSubheader>
                     <div className="font-bold m-0 p-0">Coffee Shops</div>
@@ -90,9 +152,9 @@ export const ShopListDisplay = ({
         </Paper>
     );
 
-    async function getCafeInfo() {
+    async function getCafeInfo(query) {
         try {
-            const response = await axios.get("http://localhost:8080/cafe_api");
+            const response = await axios.get("http://localhost:8080/cafe_api", { params: query });
             const cafeData = response.data;
             console.log("Getting cafe data....");
             console.log(cafeData);
@@ -103,6 +165,7 @@ export const ShopListDisplay = ({
                     address: cafe.Address,
                     parking: cafe.Parking,
                     cost: cafe.Cost,
+                    area: cafe.Area
                 };
             });
             console.log("getting cafe info...");
