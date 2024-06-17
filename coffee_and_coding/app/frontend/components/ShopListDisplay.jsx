@@ -6,13 +6,18 @@ import { Button, ListSubheader, ThemeProvider } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import { SelectMulti } from "./SelectMulti.jsx";
-import Box from "@mui/material/Box";
 import axios from "axios";
 import { useQueryParams, NumberParam, StringParam, ArrayParam} from 'use-query-params';
+import { SelectMulti } from "./SelectMulti.jsx";
+import Box from "@mui/material/Box";
 import theme from "./theme.jsx";
 
-export const ShopListDisplay = ( { searchInputValue }) => {
+export const ShopListDisplay = ({
+    selectedFilterOptions,
+    selectedSortOption,
+    searchInputValue
+  
+}) => {
     const staticShops = [
         { name: "Cafe Comma", description: "Good", area: "Atlanta", score: 4 },
         {
@@ -35,11 +40,9 @@ export const ShopListDisplay = ( { searchInputValue }) => {
         },
     ];
 
-    // dropdown values
-    const names = ["Downtown Atlanta", "Reynoldstown", "Westside Provisions", "Midtown"];
-    const cost = ["$", "$$", "$$$"];
-    const ratings = ["1", "2", "3", "4", "5"];
-    const parkingList = ["Free", "Paid", "Parking Deck", "Parking Lot", "Street Parking", "No Parking"];
+    const [searchValue, setSearchValue] = useState("");
+    const [areaName, setAreaName] = useState([]);
+    const [cafeCost, setcafeCost] = useState([]);
     
     // setting filter/search bar values
     const [cafeInfo, setCafeInfo] = useState([]);
@@ -107,10 +110,8 @@ export const ShopListDisplay = ( { searchInputValue }) => {
     // });
 
     return (
-        <div>
-            <Paper sx={{ m: 1, height: "100%", p: 2 }} elevation={4}>
-                <Box>
-                <ThemeProvider theme={theme}>
+        <Paper elevation={4}>
+                 <ThemeProvider theme={theme}>
                     <Button
                             sx={{ margin: '15px'}}
                             color="pink"
@@ -120,53 +121,35 @@ export const ShopListDisplay = ( { searchInputValue }) => {
                         Clear Filters
                     </Button>
                 </ThemeProvider>
-
-                    <SelectMulti
-                        list={names}
-                        labelName={"Areas"}
-                        filterValue={areaName || []}
-                        setter={handleCity}
-                                                
-                    />
-                    <SelectMulti
-                        list={cost}
-                        labelName={"Cost"}
-                        filterValue={cafeCost || []}
-                        setter={handleCost}
-                        
-                    />
-                    <SelectMulti
-                        list={ratings}
-                        labelName={"Rating"}
-                        filterValue={cafeRating || []}
-                        setter={handleRating}
-                    />
-                    <SelectMulti
-                        list={parkingList}
-                        labelName={"Parking"}
-                        filterValue={cafeParking || []}
-                        setter={handleParking}                        
-                    />
-                </Box>
-                <List>
-                    <ListSubheader>Coffee Shops</ListSubheader>
-
-                    {cafeInfo.map((cafe, index) => (
-                        <ListItemButton key={cafe.name}>
-                            <ListItem
-                                sx={{ borderBottom: 1, borderColor: "divider" }}
-                            >
-                                <ListItemText
-                                    primary={cafe.name}
-                                    secondary={cafe.address}
-                                />
-                                {cafe.cost}
-                            </ListItem>
-                        </ListItemButton>
-                    ))}
-                </List>
-            </Paper>
-        </div>
+            <List>
+                <ListSubheader>
+                    <div className="font-bold m-0 p-0">Coffee Shops</div>
+                    {selectedFilterOptions}
+                    <br />
+                    {selectedSortOption == 0
+                        ? "Cost"
+                        : selectedSortOption == 1
+                        ? "Rating"
+                        : null}
+                </ListSubheader>
+                {staticShops.map((cafe, index) => (
+                    <ListItemButton key={cafe.name}>
+                        <ListItem
+                            sx={{
+                                borderBottom: 1,
+                                borderColor: "divider",
+                            }}
+                        >
+                            <ListItemText
+                                primary={cafe.name}
+                                secondary={cafe.address}
+                            />
+                            {cafe.cost}
+                        </ListItem>
+                    </ListItemButton>
+                ))}
+            </List>
+        </Paper>
     );
 
     async function getCafeInfo(query) {
