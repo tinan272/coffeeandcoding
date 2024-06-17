@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import MapContainer from "./frontend/components/MapContainer.jsx";
-import { Button, ListSubheader } from "@mui/material";
+import { Button, ListItemButton, ListSubheader } from "@mui/material";
 import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
+import { DisplayOptions } from "./frontend/components/DisplayOptions.jsx";
 import background_img from "../public/background_img.jpg";
 import Grid from "@mui/material/Grid";
 import Image from "next/image";
@@ -14,12 +15,36 @@ import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { BrowserRouter } from 'react-router-dom';
 import { useRouter } from "next/navigation";
 import { Search } from "./frontend/components/Search.jsx";
+import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./frontend/components/theme.jsx"; 
-
 export default function Home() {
-  const [searchValue, setSearchValue] = useState("");
-  const router = useRouter();
+    const theme = createTheme({
+        palette: {
+            pink: {
+                main: "#F08E80",
+                light: "#FDF0E6",
+                dark: "#F4AC9F",
+                contrastText: "#242105",
+            },
+        },
+    });
+    const [open, setOpen] = React.useState(0);
+    const [filterType, setFilterType] = useState(0); // State to track the filter type (sorting or filtering)
+    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null); // track selected filters to pass into ShopListDisplay
+    const [selectedSortOption, setSelectedSortOption] = useState(null);
+
+    const handleFilterClick = (type) => {
+        setFilterType(type);
+        setOpen(true);
+    };
+
+    const handleFilterClose = () => {
+        setOpen(false);
+    };
+
+    const [searchValue, setSearchValue] = useState("");
+    const router = useRouter();
 
   return (
     <BrowserRouter>
@@ -82,42 +107,58 @@ export default function Home() {
                 </IconButton>
               </div>
             </div>
-            <div id="map" className="mx-24 mb-24">
-              <Box display="flex" justifyItems="justify-items-center">
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Search searchValueSetter={setSearchValue} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <div className="flex justify-center space-x-4 ">
-                      <Button
-                        sx={{ width: "10%" }}
-                        color="pink"
-                        variant="contained"
-                      >
-                        Sort
-                      </Button>
-                      <Button
-                        color="pink"
-                        variant="contained"
-                        sx={{ width: "10%" }}
-                      >
-                        Filter
-                      </Button>
-                    </div>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <ShopListDisplay />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <MapContainer />
-                  </Grid>
-                </Grid>
-              </Box>
+                <div id="map" className="mx-24 mb-24">
+                    <Box display="flex" justifyItems="justify-items-center">
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Search searchValueSetter={setSearchValue} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <div className="flex justify-center space-x-4 ">
+                                    <Button
+                                        sx={{ width: "10%" }}
+                                        color="pink"
+                                        variant="contained"
+                                        onClick={() => handleFilterClick(0)}
+                                    >
+                                        Sort
+                                    </Button>
+                                    <Button
+                                        color="pink"
+                                        variant="contained"
+                                        sx={{ width: "10%" }}
+                                        onClick={() => handleFilterClick(1)}
+                                    >
+                                        Filter
+                                    </Button>
+                                </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <ShopListDisplay
+                                    selectedFilterOptions={
+                                        selectedFilterOptions
+                                    }
+                                    selectedSortOption={selectedSortOption}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <MapContainer />
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </div>
+            <div>
+                <DisplayOptions
+                    type={filterType}
+                    openView={open}
+                    handleClose={handleFilterClose}
+                    setSelectedFilterOptions={setSelectedFilterOptions} // ex: "Atlanta, $$"
+                    setSelectedSortOption={setSelectedSortOption} // "Rating"
+                />
             </div>
-          </main>
+        </main>
         </ThemeProvider>
       </QueryParamProvider>
     </BrowserRouter>
-  );
+    );
 }
