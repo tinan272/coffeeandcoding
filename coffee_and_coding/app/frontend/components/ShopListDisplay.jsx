@@ -7,17 +7,14 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import axios from "axios";
-import { useQueryParams, NumberParam, StringParam, ArrayParam} from 'use-query-params';
-import { SelectMulti } from "./SelectMulti.jsx";
-import Box from "@mui/material/Box";
-import theme from "./theme.jsx";
+import {
+    useQueryParams,
+    NumberParam,
+    StringParam,
+    ArrayParam,
+} from "use-query-params";
 
-export const ShopListDisplay = ({
-    selectedFilterOptions,
-    selectedSortOption,
-    searchInputValue
-  
-}) => {
+export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
     const staticShops = [
         { name: "Cafe Comma", description: "Good", area: "Atlanta", score: 4 },
         {
@@ -40,10 +37,8 @@ export const ShopListDisplay = ({
         },
     ];
 
-    const [searchValue, setSearchValue] = useState("");
-    const [areaName, setAreaName] = useState([]);
-    const [cafeCost, setcafeCost] = useState([]);
-    
+    const { cities, costs, ratings, parkings } = selectedFilterValues;
+
     // setting filter/search bar values
     const [cafeInfo, setCafeInfo] = useState([]);
 
@@ -56,10 +51,15 @@ export const ShopListDisplay = ({
         parking: ArrayParam,
     });
 
-    const {  city: areaName, cost: cafeCost, rating: cafeRating, parking: cafeParking } = query || {};
+    const {
+        city: areaName,
+        cost: cafeCost,
+        rating: cafeRating,
+        parking: cafeParking,
+    } = query || {};
     console.log("this is the query", query);
 
-    // getting cafe info and setting it 
+    // getting cafe info and setting it
     useEffect(() => {
         getCafeInfo(query).then((cafeData) => {
             setCafeInfo(cafeData);
@@ -68,6 +68,10 @@ export const ShopListDisplay = ({
 
     useEffect(() => {
         handleSearch(searchInputValue);
+        handleCost(costs);
+        handleCity(cities);
+        handleRating(ratings);
+        handleParking(parkings);
     });
 
     const handleSearch = (inputValue) => {
@@ -90,13 +94,6 @@ export const ShopListDisplay = ({
         setQuery({ parking: selectedParking });
     };
 
-
-    // clearing the dropdown menus
-    function onClear() {
-        console.log("Clearing filters...");
-        setQuery({ search: "", city: [], cost: [], rating: [], parking: []});
-    };
-
     // filter based on the cafe name that is set by Search comp.
     // const filteredShops = cafeInfo.filter((shop) => {
     //     const matchesName = shop.name
@@ -111,26 +108,9 @@ export const ShopListDisplay = ({
 
     return (
         <Paper elevation={4}>
-                 <ThemeProvider theme={theme}>
-                    <Button
-                            sx={{ margin: '15px'}}
-                            color="pink"
-                            variant="contained"
-                            onClick={onClear}
-                    >
-                        Clear Filters
-                    </Button>
-                </ThemeProvider>
             <List>
                 <ListSubheader>
                     <div className="font-bold m-0 p-0">Coffee Shops</div>
-                    {selectedFilterOptions}
-                    <br />
-                    {selectedSortOption == 0
-                        ? "Cost"
-                        : selectedSortOption == 1
-                        ? "Rating"
-                        : null}
                 </ListSubheader>
                 {staticShops.map((cafe, index) => (
                     <ListItemButton key={cafe.name}>
@@ -154,7 +134,9 @@ export const ShopListDisplay = ({
 
     async function getCafeInfo(query) {
         try {
-            const response = await axios.get("http://localhost:8080/cafe_api", { params: query });
+            const response = await axios.get("http://localhost:8080/cafe_api", {
+                params: query,
+            });
             const cafeData = response.data;
             console.log("Getting cafe data....");
             console.log(cafeData);
@@ -165,7 +147,7 @@ export const ShopListDisplay = ({
                     address: cafe.Address,
                     parking: cafe.Parking,
                     cost: cafe.Cost,
-                    area: cafe.Area
+                    area: cafe.Area,
                 };
             });
             console.log("getting cafe info...");
