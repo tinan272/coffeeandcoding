@@ -1,19 +1,24 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { Multiselect } from "./SelectMulti.jsx";
+import Select from "@mui/material/Select";
 import Modal from "@mui/material/Modal";
 
 export const SelectMulti = ({
     type,
     openMultiView,
     handleClose,
-    setSelectedFilterOptions,
+    setters,
+    clearMulti,
 }) => {
+    useEffect(() => {
+        if (clearMulti) {
+            setSelectedOptions([]);
+        }
+    }, [clearMulti]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const handleChange = (event) => {
         const {
@@ -21,26 +26,40 @@ export const SelectMulti = ({
         } = event;
         const newSelectedOptions =
             typeof value === "string" ? value.split(",") : value;
-
         setSelectedOptions(newSelectedOptions);
-        setSelectedFilterOptions(newSelectedOptions.join(" , "));
+        let options = value.filter((option) => {
+            switch (type) {
+                case "cities":
+                    console.log(optionsDict.cities.list.includes(option));
+                    return optionsDict.cities.list.includes(option);
+                case "costs":
+                    return optionsDict.costs.list.includes(option);
+                case "ratings":
+                    return optionsDict.ratings.list.includes(option);
+                case "parking":
+                    return optionsDict.parking.list.includes(option);
+                default:
+                    return "Not found";
+            }
+        });
+        setters[type](options);
     };
 
     const optionsDict = {
-        0: {
+        cities: {
             list: ["Atlanta", "Buckhead", "Marietta", "Roswell"],
             labelName: "Area",
         },
-        1: {
+        costs: {
             list: ["$", "$$", "$$$"],
             labelName: "Cost",
         },
-        2: {
+        ratings: {
             list: [1, 2, 3, 4, 5],
             labelName: "Rating",
         },
-        3: {
-            list: ["Free Parking"],
+        parking: {
+            list: ["Free Parking", "Easy Parking"],
             labelName: "Parking",
         },
     };
