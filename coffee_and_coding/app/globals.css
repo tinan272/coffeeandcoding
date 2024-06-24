@@ -34,6 +34,10 @@ body {
     background-color: rgb(238, 204, 199);
 }
 
+#dark-blue-fill {
+    background-color: rgb(10, 14, 99);
+}
+
 @layer base {
     @font-face {
         font-family: "Open Sans";
