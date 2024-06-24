@@ -74,7 +74,7 @@ export const DisplayOptions = ({
             <ListItemButton
                 sx={{
                     width: "100%",
-                    height: "3rem",
+                    height: "4rem",
                     backgroundColor: "white",
                     boxShadow: 1,
                     paddingBottom: "1rem",
@@ -86,6 +86,9 @@ export const DisplayOptions = ({
                     primaryTypographyProps={{
                         fontSize: "1rem",
                         fontWeight: "light",
+                        paddingLeft: "1rem",
+                    }}
+                    secondaryTypographyProps={{
                         paddingLeft: "1rem",
                     }}
                     primary={option}
@@ -111,10 +114,7 @@ export const DisplayOptions = ({
                     justifyContent: "center",
                 }}
             >
-                <div
-                    id="light-pink-fill"
-                    className="w-1/3 h-1/2 self-center z-10"
-                >
+                <div id="light-pink-fill" className="w-1/3 self-center z-10">
                     <div className="flex bg-white font-bold items-center text-xl p-5">
                         {type ? "Filter" : "Sort"}
                     </div>

@@ -75,22 +75,22 @@ export const SelectMulti = ({
                     justifyContent: "center",
                 }}
             >
-                <div className="flex bg-white w-1/2 h-2/3 flex-col">
+                <div className="flex w-1/2 h-1/2 flex-col bg-white">
                     <div
-                        id="light-pink-fill"
                         className="p-5 z-10 text-xl font-bold"
+                        id="light-pink-fill"
                     >
                         {optionsDict[type]?.labelName}
                     </div>
                     <FormControl
                         sx={{
-                            backgroundColor: "white",
                             m: 3,
+                            backgroundColor: "white",
                         }}
                     >
                         <InputLabel
                             id="demo-multiple-name-label"
-                            sx={{ textAlign: "center" }}
+                            sx={{ textAlign: "center"}}
                         >
                             {optionsDict[type]?.labelName}
                         </InputLabel>
