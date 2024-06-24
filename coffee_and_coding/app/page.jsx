@@ -150,7 +150,7 @@ export default function Home() {
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <div className="flex justify-center space-x-4 ">
+                                        <div className="flex justify-center space-x-4">
                                             <Button
                                                 sx={{ width: "10%" }}
                                                 color="pink"
