@@ -7,6 +7,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import axios from "axios";
+import PageRight from "@mui/icons-material/ArrowCircleRightOutlined";
+import PageLeft from "@mui/icons-material/ArrowCircleLeftOutlined";
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
+
 import {
     useQueryParams,
     NumberParam,
@@ -31,6 +36,30 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
         },
         {
             name: "Perc",
+            description: "Excellent coffee",
+            area: "Atlanta",
+            score: 5,
+        },
+        {
+            name: "Dunkin",
+            description: "Excellent coffee",
+            area: "Marietta",
+            score: 5,
+        },
+        {
+            name: "Dancing Goats",
+            description: "Excellent coffee",
+            area: "Atlanta",
+            score: 5,
+        },
+        {
+            name: "Black Rifle",
+            description: "Excellent coffee",
+            area: "Marietta",
+            score: 5,
+        },
+        {
+            name: "Con Leche",
             description: "Excellent coffee",
             area: "Atlanta",
             score: 5,
@@ -107,28 +136,38 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
     // });
 
     return (
-        <Paper elevation={4}>
-            <List>
-                <ListSubheader>
-                    <div className="font-bold m-0 p-0">Coffee Shops</div>
-                </ListSubheader>
-                {staticShops.map((cafe, index) => (
-                    <ListItemButton key={cafe.name}>
-                        <ListItem
-                            sx={{
-                                borderBottom: 1,
-                                borderColor: "divider",
-                            }}
-                        >
-                            <ListItemText
-                                primary={cafe.name}
-                                secondary={cafe.address}
-                            />
-                            {cafe.cost}
-                        </ListItem>
-                    </ListItemButton>
-                ))}
-            </List>
+        <Paper elevation={4} sx={{ paddingBottom: 2 }}>
+            <Stack spacing={2}>
+                <List>
+                    <ListSubheader>
+                        <div className="font-bold m-0 p-0">Coffee Shops</div>
+                    </ListSubheader>
+                    {staticShops.map((cafe, index) => (
+                        <ListItemButton key={cafe.name}>
+                            <ListItem
+                                sx={{
+                                    borderBottom: 1,
+                                    borderColor: "divider",
+                                }}
+                            >
+                                <ListItemText
+                                    primary={cafe.name}
+                                    secondary={cafe.address}
+                                />
+                                {cafe.cost}
+                            </ListItem>
+                        </ListItemButton>
+                    ))}
+                </List>
+                <div className="flex items-center justify-center">
+                    <IconButton size="large">
+                        <PageLeft fontSize="medium" />
+                    </IconButton>
+                    <IconButton size="large">
+                        <PageRight fontSize="medium" />
+                    </IconButton>
+                </div>
+            </Stack>
         </Paper>
     );
 
