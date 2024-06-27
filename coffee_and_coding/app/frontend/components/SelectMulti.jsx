@@ -90,7 +90,7 @@ export const SelectMulti = ({
                     >
                         <InputLabel
                             id="demo-multiple-name-label"
-                            sx={{ textAlign: "center"}}
+                            sx={{ textAlign: "center" }}
                         >
                             {optionsDict[type]?.labelName}
                         </InputLabel>
