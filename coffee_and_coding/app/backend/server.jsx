@@ -14,6 +14,7 @@ async function startServer() {
         const cafeRouter = await cafes.getCafes(client);
         app.use('/cafe_api', cafeRouter);
 
+
         app.listen(8080, () => {
             console.log("server running on port 8080");
         });
