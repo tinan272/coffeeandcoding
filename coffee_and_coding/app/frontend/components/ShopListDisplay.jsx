@@ -34,42 +34,12 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
             area: "Marietta",
             score: 3,
         },
-        {
-            name: "Perc",
-            description: "Excellent coffee",
-            area: "Atlanta",
-            score: 5,
-        },
-        {
-            name: "Dunkin",
-            description: "Excellent coffee",
-            area: "Marietta",
-            score: 5,
-        },
-        {
-            name: "Dancing Goats",
-            description: "Excellent coffee",
-            area: "Atlanta",
-            score: 5,
-        },
-        {
-            name: "Black Rifle",
-            description: "Excellent coffee",
-            area: "Marietta",
-            score: 5,
-        },
-        {
-            name: "Con Leche",
-            description: "Excellent coffee",
-            area: "Atlanta",
-            score: 5,
-        },
     ];
 
     const { cities, costs, ratings, parkings } = selectedFilterValues;
 
     // setting filter/search bar values
-    const [cafeInfo, setCafeInfo] = useState([]);
+    const [cafeInfo, setCafeInfo] = useState({ cafes: [], totalPages: 0 });
 
     // for syncing query parameters in real time & sending to backend server
     const [query, setQuery] = useQueryParams({
@@ -78,20 +48,27 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
         cost: ArrayParam,
         rating: ArrayParam,
         parking: ArrayParam,
+        page: NumberParam,
+        limit: NumberParam,
     });
+
+    const [currPage, setCurrPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(5);
 
     const {
         city: areaName,
         cost: cafeCost,
         rating: cafeRating,
         parking: cafeParking,
+        limit,
     } = query || {};
-    console.log("this is the query", query);
+    // console.log("this is the query", query);
 
     // getting cafe info and setting it
     useEffect(() => {
         getCafeInfo(query).then((cafeData) => {
             setCafeInfo(cafeData);
+            setTotalPages(cafeData.totalPages);
         });
     }, [query]);
 
@@ -123,17 +100,24 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
         setQuery({ parking: selectedParking });
     };
 
-    // filter based on the cafe name that is set by Search comp.
-    // const filteredShops = cafeInfo.filter((shop) => {
-    //     const matchesName = shop.name
-    //         .toLowerCase()
-    //         .includes(searchValue.toLowerCase());
-    //     const matchesArea =
-    //         areaName.length === 0 || areaName.includes(shop.area); // === 0 shows everything if no filter set
-    //     const matchesCost =
-    //         cafeCost.length === 0 || cafeCost.includes(shop.cost);
-    //     return matchesName && matchesCost && matchesArea;
-    // });
+    const goToPage = (pageNum) => {
+        if (pageNum >= 1 && pageNum <= totalPages) {
+            setCurrPage(pageNum);
+            setQuery({ ...query, page: pageNum });
+        }
+    };
+    const goToNextPage = () => {
+        if (currPage < totalPages) {
+            const nextPage = currPage + 1;
+            goToPage(nextPage);
+        }
+    };
+    const goToPrevPage = () => {
+        if (currPage > 1) {
+            const prevPage = currPage - 1;
+            goToPage(prevPage);
+        }
+    };
 
     return (
         <Paper elevation={4} sx={{ paddingBottom: 2 }}>
@@ -142,7 +126,7 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
                     <ListSubheader>
                         <div className="font-bold m-0 p-0">Coffee Shops</div>
                     </ListSubheader>
-                    {staticShops.map((cafe, index) => (
+                    {cafeInfo.cafes.map((cafe, index) => (
                         <ListItemButton key={cafe.name}>
                             <ListItem
                                 sx={{
@@ -160,10 +144,10 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
                     ))}
                 </List>
                 <div className="flex items-center justify-center">
-                    <IconButton size="large">
+                    <IconButton size="large" onClick={goToPrevPage}>
                         <PageLeft fontSize="medium" />
                     </IconButton>
-                    <IconButton size="large">
+                    <IconButton size="large" onClick={goToNextPage}>
                         <PageRight fontSize="medium" />
                     </IconButton>
                 </div>
@@ -174,13 +158,11 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
     async function getCafeInfo(query) {
         try {
             const response = await axios.get("http://localhost:8080/cafe_api", {
-                params: query,
+                params: { ...query, limit: 5 },
             });
-            const cafeData = response.data;
-            console.log("Getting cafe data....");
-            console.log(cafeData);
+            const cafeData = response.data.cafes;
+            const totalPages = response.data.totalPages;
             const cafes = cafeData.map((cafe) => {
-                console.log("Cost:", cafe.Cost);
                 return {
                     name: cafe.Name,
                     address: cafe.Address,
@@ -189,9 +171,9 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
                     area: cafe.Area,
                 };
             });
-            console.log("getting cafe info...");
-            console.log(cafes);
-            return cafes;
+            console.log("response cafes:", cafeData);
+            console.log("response pages:", totalPages);
+            return { cafes, totalPages };
         } catch (error) {
             console.log("error fetching cafe: ", error);
             return [];
