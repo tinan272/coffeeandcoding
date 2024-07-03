@@ -47,7 +47,7 @@ export const SelectMulti = ({
 
     const optionsDict = {
         cities: {
-            list: ["Atlanta", "Buckhead", "Marietta", "Roswell"],
+            list: ["Westside Provisions", "Reynoldstown", "Brookwood Hills", "Midtown"],
             labelName: "Area",
         },
         costs: {
@@ -59,7 +59,7 @@ export const SelectMulti = ({
             labelName: "Rating",
         },
         parking: {
-            list: ["Free Parking", "Easy Parking"],
+            list: ["Free", "Street", "Parking Deck", "Parking Lot", "Validated"],
             labelName: "Parking",
         },
     };

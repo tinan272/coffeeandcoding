@@ -20,6 +20,7 @@ async function getCafes(client) {
             const limit = parseInt(req.query.limit) || default_cafe_limit;
             const skip = (page - 1) * limit;
 
+            // query params sent from frontend
             const filters = {
                 search: req.query.search,
                 city: req.query.city,
@@ -27,46 +28,42 @@ async function getCafes(client) {
                 parking: req.query.parking,
             };
 
-            // console.log("Query Parameters:");
-            // console.log("Search:", filters.search);
-            // console.log("City:", filters.city);
-            // console.log("Cost:", filters.cost);
-            // console.log("Parking:", filters.parking);
+            console.log("Query Parameters:");
+            console.log("Search:", filters.search);
+            console.log("City:", filters.city);
+            console.log("Cost:", filters.cost);
+            console.log("Parking:", filters.parking);
 
             console.log("router working");
 
-            // if (filters.search) {
-            //     pipeline.push({ $match: { "Name": filters.search } });
-            // }
-            // if (filters.city) {
-            //     pipeline.push({ $match: { "Area": filters.city } });
-            // }
-            // if (filters.cost) {
-            //     pipeline.push({ $match: { "Cost": filters.cost } });
-            // }
-            // if (filters.parking) {
-            //     pipeline.push({ $match: { "Parking": filters.parking } });
-            // }
-
             const pipeline = [];
 
-            if (filters.search) {
-                pipeline.push({
-                    $match: {
-                        Name: { $regex: new RegExp(filters.search, "i") },
-                    },
-                });
-            }
-            if (filters.city) {
-                pipeline.push({ $match: { Area: filters.city } });
-            }
-            if (filters.cost) {
-                pipeline.push({ $match: { Cost: filters.cost } });
-            }
-            if (filters.parking) {
-                pipeline.push({ $match: { Parking: filters.parking } });
-            }
+            // creating query object to filter documents
+            const query = {};
 
+            // filtering documents based on search value
+            if (filters.search) {
+                query["$or"] = [ 
+                    { Name: { $regex: filters.search, $options: "i" }},
+                    {Address: { $regex: filters.search, $options: "i"}}
+                ];
+            }
+            // filtering based on city value
+            if (filters.city) {
+                query["Area"] = { $in: filters.city };
+            }
+            // filtering based on cost
+            if (filters.cost) {
+                query["Cost"] = { $in: filters.cost };
+            }
+            // filtering based on parking type
+            if (filters.parking && filters.parking.length > 0) {
+                const regexArray = filters.parking.map(parkingType => ({ Parking_Type: { $regex: parkingType, $options: "i"} }));
+                query["$and"] = regexArray;
+            };
+
+
+            // pagination pipeline
             pipeline.push({ $count: "totalCount" });
             const countResult = await collection.aggregate(pipeline).toArray();
             const totalCount =
@@ -77,11 +74,9 @@ async function getCafes(client) {
             pipeline.push({ $limit: limit });
             console.log("Aggregation pipeline:", pipeline);
 
-            const filteredResults = await collection
-                .aggregate(pipeline)
-                .toArray();
-
-            console.log("Filtered results:", filteredResults);
+            // filtering documents and sending to api endpoint
+            const filteredResults = await collection.find(query).toArray();
+            console.log("testing filter on area and cost", filteredResults)
 
             const response = {
                 cafes: filteredResults,
