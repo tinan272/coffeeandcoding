@@ -169,6 +169,7 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
                     parking: cafe.Parking,
                     cost: cafe.Cost,
                     area: cafe.Area,
+                    parking_type: cafe.Parking_Type,
                 };
             });
             console.log("response cafes:", cafeData);
