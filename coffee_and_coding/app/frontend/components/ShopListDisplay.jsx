@@ -143,13 +143,18 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
                         </ListItemButton>
                     ))}
                 </List>
-                <div className="flex items-center justify-center">
-                    <IconButton size="large" onClick={goToPrevPage}>
-                        <PageLeft fontSize="medium" />
-                    </IconButton>
-                    <IconButton size="large" onClick={goToNextPage}>
-                        <PageRight fontSize="medium" />
-                    </IconButton>
+                <div className="flex flex-col items-center justify-center">
+                    <div>
+                        <IconButton size="large" onClick={goToPrevPage}>
+                            <PageLeft fontSize="medium" />
+                        </IconButton>
+                        <IconButton size="large" onClick={goToNextPage}>
+                            <PageRight fontSize="medium" />
+                        </IconButton>
+                    </div>
+                    <div className="font-thin text-ml">
+                        Page {currPage} of {totalPages}
+                    </div>
                 </div>
             </Stack>
         </Paper>
