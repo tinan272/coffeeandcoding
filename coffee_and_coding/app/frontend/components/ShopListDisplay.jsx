@@ -162,6 +162,7 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
             });
             const cafeData = response.data.cafes;
             const totalPages = response.data.totalPages;
+            console.log(response.data);
             const cafes = cafeData.map((cafe) => {
                 return {
                     name: cafe.Name,
@@ -172,8 +173,6 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
                     parking_type: cafe.Parking_Type,
                 };
             });
-            console.log("response cafes:", cafeData);
-            console.log("response pages:", totalPages);
             return { cafes, totalPages };
         } catch (error) {
             console.log("error fetching cafe: ", error);
