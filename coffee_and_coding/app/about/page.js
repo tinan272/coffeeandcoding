@@ -11,6 +11,7 @@ export default function page() {
     const links = [
         { name: "Home", href: "/" },
         { name: "Blog", href: "/blog" },
+        { name: "About Us", href: "/about" },
     ];
     return (
         <div>
