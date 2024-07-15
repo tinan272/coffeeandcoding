@@ -9,7 +9,7 @@ export default function Header({ title, links }) {
                 id="dark-blue-fill"
                 className="flex h-88 top-0 w-full p-24 justify-between items-baseline"
             >
-                <div id="title" className="font-light text-6xl">
+                <div id="title" className="font-light text-4xl">
                     {title}
                 </div>
                 <div className="flex font-thin text-xl pr-6">
