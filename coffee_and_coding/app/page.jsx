@@ -83,7 +83,7 @@ export default function Home() {
                                 style={{
                                     height: "83vh",
                                     width: "100%",
-                                    opacity: "100%",
+                                    opacity: "80%",
                                 }}
                             ></Image>
 
