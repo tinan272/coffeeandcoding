@@ -12,10 +12,14 @@ export default function Header({ title, links }) {
                 <div id="title" className="font-light text-6xl">
                     {title}
                 </div>
-                <div className="flex font-thin text-xl">
+                <div className="flex font-thin text-xl pr-6">
                     <div className="flex">
                         {links.map((link, index) => (
-                            <Link key={index} href={link.href} className="px-8">
+                            <Link
+                                key={index}
+                                href={link.href}
+                                className="justify-between linkEffect linkEffect--insideOut mx-6"
+                            >
                                 {link.name}
                             </Link>
                         ))}

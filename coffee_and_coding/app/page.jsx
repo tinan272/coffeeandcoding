@@ -83,46 +83,50 @@ export default function Home() {
                                 style={{
                                     height: "83vh",
                                     width: "100%",
-                                    opacity: "70%",
+                                    opacity: "100%",
                                 }}
                             ></Image>
 
                             <div className="flex absolute top-0 w-full p-24 items-end">
                                 <div
-                                    className="flex-auto font-light text-6xl left-0 w-200"
+                                    className="flex-auto font-light text-6xl left-0 w-200 text-white"
                                     id="title"
                                 >
                                     coffee&coding
                                 </div>
-                                <div className="flex-none w-60 left-0 font-thin text-xl">
+
+                                <div className="flex-none w-80 left-0 font-thin text-xl">
                                     <div className="flex justify-end justify-around">
-                                        <div>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    router.push("/blog")
-                                                }
-                                            >
-                                                Blog
-                                            </button>
-                                        </div>
-                                        <div>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    router.push("/about")
-                                                }
-                                            >
-                                                About Us
-                                            </button>
-                                        </div>
+                                        <button
+                                            className="linkEffect linkEffect--insideOut"
+                                            type="button"
+                                            onClick={() => router.push("/")}
+                                        >
+                                            Home
+                                        </button>
+                                        <button
+                                            className="linkEffect linkEffect--insideOut"
+                                            type="button"
+                                            onClick={() => router.push("/blog")}
+                                        >
+                                            Blog
+                                        </button>
+                                        <button
+                                            className="linkEffect linkEffect--insideOut"
+                                            type="button"
+                                            onClick={() =>
+                                                router.push("/about")
+                                            }
+                                        >
+                                            About Us
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                             <div></div>
                         </div>
                         <div className="flex-col py-8 text-center w-100 text-5xl font-light">
-                            <div>Coffee Shop Map</div>
+                            <div id="title">Coffee Shop Map</div>
                             <div>
                                 <IconButton
                                     sx={{ color: "black" }}
