@@ -16,10 +16,9 @@ async function getCafes(client) {
 
     router.get("/", async (req, res) => {
         try {
-            const page = parseInt(req.query.page) || default_start_page;
-            const limit = parseInt(req.query.limit) || default_cafe_limit;
-            const skip = (page - 1) * limit;
-
+            const page = parseInt(req.query.page, 10) || default_start_page;
+            const pageSize =
+                parseInt(req.query.limit, 10) || default_cafe_limit;
             // query params sent from frontend
             const filters = {
                 search: req.query.search,
@@ -43,9 +42,9 @@ async function getCafes(client) {
 
             // filtering documents based on search value
             if (filters.search) {
-                query["$or"] = [ 
-                    { Name: { $regex: filters.search, $options: "i" }},
-                    {Address: { $regex: filters.search, $options: "i"}}
+                query["$or"] = [
+                    { Name: { $regex: filters.search, $options: "i" } },
+                    { Address: { $regex: filters.search, $options: "i" } },
                 ];
             }
             // filtering based on city value
@@ -58,29 +57,42 @@ async function getCafes(client) {
             }
             // filtering based on parking type
             if (filters.parking && filters.parking.length > 0) {
-                const regexArray = filters.parking.map(parkingType => ({ Parking_Type: { $regex: parkingType, $options: "i"} }));
+                const regexArray = filters.parking.map((parkingType) => ({
+                    Parking_Type: { $regex: parkingType, $options: "i" },
+                }));
                 query["$and"] = regexArray;
-            };
-
+            }
 
             // pagination pipeline
-            pipeline.push({ $count: "totalCount" });
-            const countResult = await collection.aggregate(pipeline).toArray();
-            const totalCount =
-                countResult.length > 0 ? countResult[0].totalCount : 0;
-            pipeline.pop();
 
-            pipeline.push({ $skip: skip });
-            pipeline.push({ $limit: limit });
-            console.log("Aggregation pipeline:", pipeline);
+            const articles = [
+                { $match: query },
+                {
+                    $facet: {
+                        metadata: [{ $count: "totalCount" }],
+                        data: [
+                            { $skip: (page - 1) * pageSize },
+                            { $limit: pageSize },
+                        ],
+                    },
+                },
+            ];
 
             // filtering documents and sending to api endpoint
-            const filteredResults = await collection.find(query).toArray();
-            console.log("testing filter on area and cost", filteredResults)
+            const filteredResults = await collection
+                .aggregate(articles)
+                .toArray();
+            const totalCount = filteredResults[0].metadata[0]
+                ? filteredResults[0].metadata[0].totalCount
+                : 0;
+            console.log("testing filter on area and cost", filteredResults);
 
             const response = {
-                cafes: filteredResults,
-                totalPages: Math.ceil(totalCount / limit),
+                cafes: filteredResults[0].data,
+                totalPages: Math.ceil(totalCount / pageSize),
+                currentPage: page,
+                pageSize: pageSize,
+                totalCount: totalCount,
             };
             res.json(response);
         } catch (error) {
