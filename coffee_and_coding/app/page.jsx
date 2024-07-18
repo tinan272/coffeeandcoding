@@ -83,11 +83,11 @@ export default function Home() {
                                 style={{
                                     height: "83vh",
                                     width: "100%",
-                                    opacity: "80%",
+                                    opacity: "100%",
                                 }}
                             ></Image>
 
-                            <div className="flex absolute top-0 w-full p-24 items-end">
+                            <div className="flex absolute top-0 w-full p-16 items-end">
                                 <div
                                     className="flex-auto font-light text-6xl left-0 w-200 text-white"
                                     id="title"
