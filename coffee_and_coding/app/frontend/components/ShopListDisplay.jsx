@@ -11,6 +11,7 @@ import PageRight from "@mui/icons-material/ArrowCircleRightOutlined";
 import PageLeft from "@mui/icons-material/ArrowCircleLeftOutlined";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
+import StarRateIcon from "@mui/icons-material/StarRate";
 
 import {
     useQueryParams,
@@ -19,7 +20,11 @@ import {
     ArrayParam,
 } from "use-query-params";
 
-export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
+export const ShopListDisplay = ({
+    searchInputValue,
+    selectedFilterValues,
+    selectedSortValue,
+}) => {
     const staticShops = [
         { name: "Cafe Comma", description: "Good", area: "Atlanta", score: 4 },
         {
@@ -44,6 +49,7 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
     // for syncing query parameters in real time & sending to backend server
     const [query, setQuery] = useQueryParams({
         search: StringParam,
+        sort: StringParam,
         city: ArrayParam,
         cost: ArrayParam,
         rating: ArrayParam,
@@ -78,12 +84,22 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
         handleCity(cities);
         handleRating(ratings);
         handleParking(parkings);
+        handleSort(selectedSortValue);
     });
 
     const handleSearch = (inputValue) => {
         setQuery({ search: inputValue });
     };
 
+    const handleSort = (inputValue) => {
+        var sortToString = " ";
+        if (inputValue == "0") {
+            sortToString = "cost";
+        } else {
+            sortToString = "rating";
+        }
+        setQuery({ sort: sortToString });
+    };
     const handleCity = (selectedCities) => {
         setQuery({ city: selectedCities });
     };
@@ -135,7 +151,18 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
                                 }}
                             >
                                 <ListItemText
-                                    primary={cafe.name}
+                                    primary={
+                                        <div className="flex">
+                                            <div>{cafe.name}</div>
+                                            <div className="ml-1 flex justify-center">
+                                                {Array.from({
+                                                    length: cafe.rating,
+                                                }).map((e, i) => (
+                                                    <StarRateIcon fontSize="small" />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    }
                                     secondary={cafe.address}
                                 />
                                 {cafe.cost}
@@ -162,13 +189,14 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
 
     async function getCafeInfo(query) {
         try {
-            const response = await axios.get("http://localhost:8080/cafe_api", {
+            const response = await axios.get("http://localhost:8083/cafe_api", {
                 params: { ...query, limit: 5 },
             });
             const cafeData = response.data.cafes;
             const totalPages = response.data.totalPages;
             console.log(response.data);
             const cafes = cafeData.map((cafe) => {
+                console.log("this is the rating", cafe.AvgOverallRating);
                 return {
                     name: cafe.Name,
                     address: cafe.Address,
@@ -176,8 +204,10 @@ export const ShopListDisplay = ({ searchInputValue, selectedFilterValues }) => {
                     cost: cafe.Cost,
                     area: cafe.Area,
                     parking_type: cafe.Parking_Type,
+                    rating: cafe.AvgOverallRating,
                 };
             });
+            // console.log("type of", typeof cafes[0].rating);
             return { cafes, totalPages };
         } catch (error) {
             console.log("error fetching cafe: ", error);
