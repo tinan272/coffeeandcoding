@@ -81,8 +81,8 @@ export default function Home() {
                                 alt="Background"
                                 src={background_img}
                                 style={{
-                                    height: "83vh",
-                                    width: "100%",
+                                    maxHeight: "83vh",
+                                    maxWidth: "100%",
                                     opacity: "100%",
                                 }}
                             ></Image>
@@ -142,7 +142,9 @@ export default function Home() {
                                 </IconButton>
                             </div>
                         </div>
-                        <div id="map" className="mx-24 mb-24">
+                        {/* <div id="map" className="mx-24 mb-24">
+                         */}
+                        <div id="map" className="mx-4 md:mx-24 mb-8 md:mb-24">
                             <Box
                                 display="flex"
                                 justifyItems="justify-items-center"
@@ -181,6 +183,9 @@ export default function Home() {
                                         <ShopListDisplay
                                             selectedFilterValues={
                                                 selectedFilterValues
+                                            }
+                                            selectedSortValue={
+                                                selectedSortValue
                                             }
                                             searchInputValue={searchValue}
                                         />
