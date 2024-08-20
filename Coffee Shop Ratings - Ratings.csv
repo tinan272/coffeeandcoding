@@ -1,0 +1,22 @@
+Name,Overall_Rating,Ambiance_Rating,Coffee_Rating,Service_Rating,Review,Row_Boolean
+Cafe Comma,4,4,5,4,n/a,0
+Dancing Goats,4,5,4,4,n/a,0
+Con Leche Coffee,5,4,5,5,n/a,0
+Prevail Union,3,4,2,4,n/a,0
+East Pole,5,5,5,4,n/a,0
+Blue Donkey,2,3,2,3,n/a,0
+Black Coffee,3,3,3,3,n/a,0
+Saint Germaine,3,5,2,3,n/a,0
+Urban Grind,2,2,2,3,n/a,0
+Apotheos,4,5,4,4,n/a,0
+Cafe Comma,4,4,5,4,n/a,1
+Dancing Goats Midtown,4,4,5,5,n/a,1
+Con Leche Coffee,4,4,5,5,n/a,1
+Prevail Union,3,4,3,3,n/a,1
+East Pole,4,4,4,4,n/a,1
+Blue Donkey,3,3,3,4,n/a,1
+Black Coffee,3,4,1,4,n/a,1
+"Saint Germain French Bakery & Café
+",3,5,3,3,n/a,1
+Urban Grind,3,4,3,4,n/a,1
+Apotheos Coffee Midtown,4,3,4,4,n/a,1
