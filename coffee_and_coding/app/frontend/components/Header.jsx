@@ -32,7 +32,7 @@ export default function Header({ title, links, img }) {
                         )}
                     </div>
                 </div>
-                <div className="text-lg md:text-xl">
+                <div className="font-thin text-lg md:text-xl">
                     {!isMobile &&
                         links.map((link, index) => (
                             <Link
