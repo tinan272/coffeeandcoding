@@ -16,8 +16,19 @@ const config: Config = {
             height: {
                 "80vh": "80vh", // custom height of 80%
             },
+            colors: {
+                pink: {
+                    DEFAULT: "#F08E80",
+                    light: "#FDF0E6",
+                    dark: "#F4AC9F",
+                },
+                blue: {
+                    DEFAULT: "#0A0E63",
+                },
+            },
         },
     },
     plugins: [],
 };
+
 export default config;

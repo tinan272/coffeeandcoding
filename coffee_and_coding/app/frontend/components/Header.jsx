@@ -5,7 +5,7 @@ import { useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function Header({ title, links }) {
+export default function Header({ title, links, img }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const isMobile = useMediaQuery("(max-width:768px)");
 
