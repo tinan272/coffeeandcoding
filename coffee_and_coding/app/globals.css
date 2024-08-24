@@ -86,3 +86,7 @@ html {
     width: 100%;
     left: 0;
 }
+
+.link:hover {
+    text-decoration: underline;
+}

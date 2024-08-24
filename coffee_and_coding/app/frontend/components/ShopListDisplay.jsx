@@ -12,6 +12,9 @@ import PageLeft from "@mui/icons-material/ArrowCircleLeftOutlined";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import StarRateIcon from "@mui/icons-material/StarRate";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import Chip from "@mui/material/Chip";
 
 import {
     useQueryParams,
@@ -24,6 +27,9 @@ export const ShopListDisplay = ({
     searchInputValue,
     selectedFilterValues,
     selectedSortValue,
+    isMobile,
+    handleFilterClick,
+    allSelectedOptions,
 }) => {
     const staticShops = [
         { name: "Cafe Comma", description: "Good", area: "Atlanta", score: 4 },
@@ -136,39 +142,87 @@ export const ShopListDisplay = ({
     };
 
     return (
-        <Paper elevation={4} sx={{ paddingBottom: 2 }}>
+        <Paper
+            elevation={isMobile ? 0 : 4}
+            sx={{ paddingBottom: 2, paddingTop: 2, borderRadius: "0" }}
+            className={isMobile ? "w-full" : null}
+        >
             <Stack spacing={2}>
                 <List>
-                    <ListSubheader>
-                        <div className="font-bold m-0 p-0">Coffee Shops</div>
-                    </ListSubheader>
-                    {cafeInfo.cafes.map((cafe, index) => (
-                        <ListItemButton key={cafe.name}>
-                            <ListItem
+                    <div className="flex justify-between items-end">
+                        <ListSubheader>
+                            <div className="font-bold m-0 p-0 text-lg">
+                                Coffee Shops
+                            </div>
+                        </ListSubheader>
+                        <div className="text-sm flex float-right">
+                            <IconButton
                                 sx={{
-                                    borderBottom: 1,
-                                    borderColor: "divider",
+                                    color: "black",
+                                    borderRadius: "0",
                                 }}
+                                color="pink"
+                                variant="contained"
+                                onClick={() => handleFilterClick(0)} //0 = sort
                             >
-                                <ListItemText
-                                    primary={
-                                        <div className="flex">
-                                            <div>{cafe.name}</div>
-                                            <div className="ml-1 flex justify-center">
-                                                {Array.from({
-                                                    length: cafe.rating,
-                                                }).map((e, i) => (
-                                                    <StarRateIcon fontSize="small" />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    }
-                                    secondary={cafe.address}
+                                <div className="text-sm">Sort</div>
+                                <SwapVertIcon
+                                    fontSize={isMobile ? "small" : "medium"}
                                 />
-                                {cafe.cost}
-                            </ListItem>
-                        </ListItemButton>
-                    ))}
+                            </IconButton>
+                            <IconButton
+                                sx={{
+                                    color: "black",
+                                    borderRadius: "0",
+                                }}
+                                color="pink"
+                                variant="contained"
+                                onClick={() => handleFilterClick(1)} //1= sort
+                            >
+                                <div className="text-sm">Filter</div>
+                                <FilterListIcon
+                                    fontSize={isMobile ? "small" : "medium"}
+                                />
+                            </IconButton>
+                        </div>
+                    </div>
+                    <Stack direction="row" spacing={1} p={2}>
+                        {allSelectedOptions.map((option, index) => (
+                            <Chip key={index} label={option} />
+                        ))}
+                    </Stack>
+                    <div>
+                        {cafeInfo.cafes.map((cafe, index) => (
+                            <ListItemButton key={index}>
+                                <ListItem
+                                    sx={{
+                                        borderBottom: 1,
+                                        borderColor: "divider",
+                                    }}
+                                >
+                                    <ListItemText
+                                        primary={
+                                            <div className="flex">
+                                                <div>{cafe.name}</div>
+                                                <div className="ml-1 flex justify-center">
+                                                    {Array.from({
+                                                        length: cafe.rating,
+                                                    }).map((e, i) => (
+                                                        <StarRateIcon
+                                                            key={i}
+                                                            fontSize="small"
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        }
+                                        secondary={cafe.address}
+                                    />
+                                    {cafe.cost}
+                                </ListItem>
+                            </ListItemButton>
+                        ))}
+                    </div>
                 </List>
                 <div className="flex flex-col items-center justify-center">
                     <div>
