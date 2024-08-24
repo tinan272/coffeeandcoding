@@ -38,7 +38,7 @@ export default function page() {
     return (
         <div className="flex flex-col">
             <Header title="About Us" links={links} />
-            <div id="title" className="flex flex-col m-8 md:m-32">
+            <div id="title" className="flex flex-col m-8 md:m-48">
                 <div className="text-xl md:text-3xl">Tina & Amal</div>
                 <div className="text-2xl md:text-6xl m-8 md:m-10">
                     Flibberty floo, the quizzle quozzle danced on the lumpy
