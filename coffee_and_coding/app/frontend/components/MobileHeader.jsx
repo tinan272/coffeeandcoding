@@ -18,15 +18,17 @@ export default function MobileHeader({
     return (
         <div>
             <div className="relative">
-                <Image
-                    alt="Background"
-                    src={img}
-                    style={{
-                        maxHeight: "83vh",
-                        maxWidth: "100%",
-                        opacity: "100%",
-                    }}
-                ></Image>
+                {img ? (
+                    <Image
+                        alt="Background"
+                        src={img}
+                        style={{
+                            maxHeight: "83vh",
+                            maxWidth: "100%",
+                            opacity: "100%",
+                        }}
+                    ></Image>
+                ) : null}
                 <div className="absolute flex top-0 w-full p-10 md:p-16 items-end">
                     <div
                         className="flex-auto font-light text-3xl md:text-6xl left-0 w-200 text-white"
@@ -42,7 +44,11 @@ export default function MobileHeader({
                                     onClick={() => setOpen(!menuOpen)}
                                     className="text-white"
                                 >
-                                    {menuOpen ? <CloseIcon /> : <MenuIcon fontSize="large"/>}
+                                    {menuOpen ? (
+                                        <CloseIcon />
+                                    ) : (
+                                        <MenuIcon fontSize="large" />
+                                    )}
                                 </button>
                             )}
                         </div>
