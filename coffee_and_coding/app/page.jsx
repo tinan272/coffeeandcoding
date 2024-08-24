@@ -4,7 +4,7 @@ import MapContainer from "./frontend/components/MapContainer.jsx";
 import { Button, ListItemButton, ListSubheader } from "@mui/material";
 import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
 import { DisplayOptions } from "./frontend/components/DisplayOptions.jsx";
-import background_img from "../public/condesa-coffee.jpg";
+import background_img from "../public/condesa-coffee-2.png";
 import Grid from "@mui/material/Grid";
 import Image from "next/image";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
