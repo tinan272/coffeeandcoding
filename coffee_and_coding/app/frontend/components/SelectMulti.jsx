@@ -13,13 +13,20 @@ export const SelectMulti = ({
     handleClose,
     setters,
     clearMulti,
+    isMobile,
+    setAllSelectedOptions,
 }) => {
+    const [selectedOptions, setSelectedOptions] = useState([]);
     useEffect(() => {
         if (clearMulti) {
             setSelectedOptions([]);
         }
     }, [clearMulti]);
-    const [selectedOptions, setSelectedOptions] = useState([]);
+
+    useEffect(() => {
+        setAllSelectedOptions(selectedOptions);
+    }, [selectedOptions]);
+
     const handleChange = (event) => {
         const {
             target: { value },
@@ -43,11 +50,17 @@ export const SelectMulti = ({
             }
         });
         setters[type](options);
+        setAllSelectedOptions(selectedOptions);
     };
 
     const optionsDict = {
         cities: {
-            list: ["Westside Provisions", "Reynoldstown", "Brookwood Hills", "Midtown"],
+            list: [
+                "Westside Provisions",
+                "Reynoldstown",
+                "Brookwood Hills",
+                "Midtown",
+            ],
             labelName: "Area",
         },
         costs: {
@@ -59,7 +72,13 @@ export const SelectMulti = ({
             labelName: "Rating",
         },
         parking: {
-            list: ["Free", "Street", "Parking Deck", "Parking Lot", "Validated"],
+            list: [
+                "Free",
+                "Street",
+                "Parking Deck",
+                "Parking Lot",
+                "Validated",
+            ],
             labelName: "Parking",
         },
     };
@@ -75,7 +94,7 @@ export const SelectMulti = ({
                     justifyContent: "center",
                 }}
             >
-                <div className="flex w-1/2 h-1/2 flex-col bg-white">
+                <div className="flex w-2/3 h-1/2 md:w-1/2 md:h-1/2 flex-col bg-white">
                     <div
                         className="p-5 z-10 text-xl font-bold"
                         id="light-pink-fill"

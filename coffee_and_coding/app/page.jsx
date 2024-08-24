@@ -1,10 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MapContainer from "./frontend/components/MapContainer.jsx";
 import { Button, ListItemButton, ListSubheader } from "@mui/material";
 import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
 import { DisplayOptions } from "./frontend/components/DisplayOptions.jsx";
-import background_img from "../public/condesa-coffee.jpg";
+import background_img from "../public/condesa-coffee-2.png";
 import Grid from "@mui/material/Grid";
 import Image from "next/image";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -16,19 +16,11 @@ import { BrowserRouter } from "react-router-dom";
 import { useRouter } from "next/navigation";
 import { Search } from "./frontend/components/Search.jsx";
 import { createTheme } from "@mui/material/styles";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "./frontend/components/theme.jsx";
+import { useMediaQuery } from "@mui/material";
+import Header from "./frontend/components/MobileHeader.jsx";
+import MobileHeader from "./frontend/components/MobileHeader.jsx";
+
 export default function Home() {
-    const theme = createTheme({
-        palette: {
-            pink: {
-                main: "#F08E80",
-                light: "#FDF0E6",
-                dark: "#F4AC9F",
-                contrastText: "#242105",
-            },
-        },
-    });
     const [open, setOpen] = React.useState(0);
     const [filterType, setFilterType] = useState(0); // State to track the filter type (sorting or filtering)
     const [selectedCities, setSelectedCities] = useState([]);
@@ -37,6 +29,7 @@ export default function Home() {
     const [selectedParking, setSelectedParking] = useState([]);
     const [selectedSortValue, setSelectedSortValue] = useState(null);
     const [searchValue, setSearchValue] = useState("");
+    const [allSelectedOptions, setAllSelectedOptions] = useState([]);
 
     const setters = {
         cities: setSelectedCities,
@@ -69,147 +62,119 @@ export default function Home() {
         console.log("clear all");
     };
 
+    const links = [
+        { name: "Home", href: "/" },
+        { name: "Blog", href: "/blog" },
+        { name: "About Us", href: "/about" },
+    ];
+
     const router = useRouter();
+    const isMobile = useMediaQuery("(max-width:768px)");
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
         <BrowserRouter>
             <QueryParamProvider adapter={ReactRouter6Adapter}>
-                <ThemeProvider theme={theme}>
-                    <main className="relative flex min-h-screen flex-col justify-between">
-                        <div className="relative bg-white">
-                            <Image
-                                alt="Background"
-                                src={background_img}
-                                style={{
-                                    maxHeight: "83vh",
-                                    maxWidth: "100%",
-                                    opacity: "100%",
-                                }}
-                            ></Image>
+                <main className="relative flex min-h-screen w-full flex-col justify-between">
+                    {isMobile ? (
+                        <MobileHeader
+                            title={"coffee&coding"}
+                            links={links}
+                            img={background_img}
+                            isMobile={isMobile}
+                            menuOpen={mobileMenuOpen}
+                            setOpen={setMobileMenuOpen}
+                        />
+                    ) : (
+                        <Header
+                            title={"coffee&coding"}
+                            links={links}
+                            img={background_img}
+                        />
+                    )}
 
-                            <div className="flex absolute top-0 w-full p-16 items-end">
-                                <div
-                                    className="flex-auto font-light text-6xl left-0 w-200 text-white"
-                                    id="title"
-                                >
-                                    coffee&coding
-                                </div>
-
-                                <div className="flex-none w-80 left-0 font-thin text-xl">
-                                    <div className="flex justify-end justify-around">
-                                        <button
-                                            className="linkEffect linkEffect--insideOut"
-                                            type="button"
-                                            onClick={() => router.push("/")}
-                                        >
-                                            Home
-                                        </button>
-                                        <button
-                                            className="linkEffect linkEffect--insideOut"
-                                            type="button"
-                                            onClick={() => router.push("/blog")}
-                                        >
-                                            Blog
-                                        </button>
-                                        <button
-                                            className="linkEffect linkEffect--insideOut"
-                                            type="button"
-                                            onClick={() =>
-                                                router.push("/about")
-                                            }
-                                        >
-                                            About Us
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                        </div>
-                        <div className="flex-col py-8 text-center w-100 text-5xl font-light">
-                            <div id="title">Coffee Shop Map</div>
-                            <div>
-                                <IconButton
-                                    sx={{ color: "black" }}
-                                    onClick={() => {
-                                        document
-                                            .getElementById("map")
-                                            .scrollIntoView({
-                                                behavior: "smooth",
-                                            });
-                                    }}
-                                >
-                                    <KeyboardArrowDownIcon fontSize="large" />
-                                </IconButton>
-                            </div>
-                        </div>
-                        {/* <div id="map" className="mx-24 mb-24">
-                         */}
-                        <div id="map" className="mx-4 md:mx-24 mb-8 md:mb-24">
-                            <Box
-                                display="flex"
-                                justifyItems="justify-items-center"
-                            >
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <Search
-                                            searchValueSetter={setSearchValue}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <div className="flex justify-center space-x-4">
-                                            <Button
-                                                sx={{ width: "10%" }}
-                                                color="pink"
-                                                variant="contained"
-                                                onClick={() =>
-                                                    handleFilterClick(0)
-                                                }
-                                            >
-                                                Sort
-                                            </Button>
-                                            <Button
-                                                color="pink"
-                                                variant="contained"
-                                                sx={{ width: "10%" }}
-                                                onClick={() =>
-                                                    handleFilterClick(1)
-                                                }
-                                            >
-                                                Filter
-                                            </Button>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <ShopListDisplay
-                                            selectedFilterValues={
-                                                selectedFilterValues
-                                            }
-                                            selectedSortValue={
-                                                selectedSortValue
-                                            }
-                                            searchInputValue={searchValue}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <MapContainer />
-                                    </Grid>
-                                </Grid>
-                            </Box>
-                        </div>
+                    <div className="flex-col pt-8 md:py-8 text-center w-100 text-2xl md:text-5xl font-light">
+                        <div id="title">Coffee Shop Map</div>
                         <div>
-                            <DisplayOptions //sorting or filtering options
-                                type={filterType}
-                                openView={open}
-                                handleClose={handleFilterClose}
-                                selectedFilterValues={selectedFilterValues}
-                                selectedSortValue={selectedSortValue} // "Rating"
-                                setSelectedSortValue={setSelectedSortValue} // "Rating"
-                                setters={setters}
-                                onClear={onClear}
-                            />
+                            <IconButton
+                                sx={{ color: "black" }}
+                                onClick={() => {
+                                    document
+                                        .getElementById("map")
+                                        .scrollIntoView({
+                                            behavior: "smooth",
+                                        });
+                                }}
+                            >
+                                <KeyboardArrowDownIcon
+                                    fontSize={isMobile ? "small" : "large"}
+                                />
+                            </IconButton>
                         </div>
-                    </main>
-                </ThemeProvider>
+                    </div>
+                    <div id="content" className="mx-0 mb-8 md:mx-24 md:mb-24">
+                        <Box display="flex" justifyItems="justify-items-center">
+                            <Grid container spacing={2} gap={isMobile ? 3 : 0}>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    md={12}
+                                    sx={isMobile ? { mx: 4 } : {}}
+                                >
+                                    <Search
+                                        searchValueSetter={setSearchValue}
+                                        size={isMobile ? "small" : "large"}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6} className="mx-0">
+                                    <ShopListDisplay
+                                        selectedFilterValues={
+                                            selectedFilterValues
+                                        }
+                                        selectedSortValue={selectedSortValue}
+                                        searchInputValue={searchValue}
+                                        isMobile={isMobile}
+                                        handleFilterClick={handleFilterClick}
+                                        allSelectedOptions={allSelectedOptions}
+                                    />
+                                </Grid>
+                                <Grid
+                                    item
+                                    id="map"
+                                    xs={12}
+                                    md={6}
+                                    sx={
+                                        isMobile
+                                            ? { mx: 4, height: "100%" }
+                                            : {}
+                                    }
+                                >
+                                    <div
+                                        className={
+                                            isMobile ? "h-1/2" : "h-full"
+                                        }
+                                    >
+                                        <MapContainer />
+                                    </div>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </div>
+                    <div>
+                        <DisplayOptions //sorting or filtering options
+                            type={filterType}
+                            openView={open}
+                            handleClose={handleFilterClose}
+                            selectedFilterValues={selectedFilterValues}
+                            selectedSortValue={selectedSortValue} // "Rating"
+                            setSelectedSortValue={setSelectedSortValue} // "Rating"
+                            setters={setters}
+                            onClear={onClear}
+                            isMobile={isMobile}
+                            setAllSelectedOptions={setAllSelectedOptions}
+                        />
+                    </div>
+                </main>
             </QueryParamProvider>
         </BrowserRouter>
     );

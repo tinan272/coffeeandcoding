@@ -29,6 +29,8 @@ export const DisplayOptions = ({
     selectedFilterValues, // "$$", "Atlanta" if those were selecte
     selectedSortValue, // "cost" or "rating"
     setSelectedSortValue, // stores chosen sort value
+    isMobile,
+    setAllSelectedOptions,
 }) => {
     const [openMultiView, setOpenMultiView] = useState(false);
     const [selectedType, setSelectedType] = useState(null);
@@ -74,10 +76,8 @@ export const DisplayOptions = ({
             <ListItemButton
                 sx={{
                     width: "100%",
-                    height: "4rem",
                     backgroundColor: "white",
                     boxShadow: 1,
-                    paddingBottom: "1rem",
                 }}
                 onClick={() => handleOpenSortOrFilter(key)}
                 key={key}
@@ -94,8 +94,8 @@ export const DisplayOptions = ({
                     primary={option}
                     secondary={getSelectedValues(key)} // Display selected values here
                 />
-                {!type &&
-                    selectedSortValue === key && ( //only render check if type == sort
+                {!type && // if type == 1, sort, then display the checked icon on btn
+                    selectedSortValue === key && (
                         <Box>
                             <CheckCircleOutlineIcon fontSize="medium" />
                         </Box>
@@ -114,7 +114,10 @@ export const DisplayOptions = ({
                     justifyContent: "center",
                 }}
             >
-                <div id="light-pink-fill" className="w-1/3 self-center z-10">
+                <div
+                    id="light-pink-fill"
+                    className="h-auto w-2/3 md:w-1/3 self-center z-10"
+                >
                     <div className="flex bg-white font-bold items-center text-xl p-5">
                         {type ? "Filter" : "Sort"}
                     </div>
@@ -127,14 +130,18 @@ export const DisplayOptions = ({
                             }}
                         >
                             {type
-                                ? renderOptions(filterOptions)
+                                ? renderOptions(filterOptions) // filter: area, cost, rating, parking
                                 : renderOptions(sortOptions)}
                         </ListItem>
                     </List>
-                    {type ? (
+                    {type ? ( // if type == true (filter), then display clear filters
                         <ThemeProvider theme={theme}>
                             <Button
-                                sx={{ margin: "15px" }}
+                                sx={{
+                                    margin: "15px",
+                                    borderRadius: "0",
+                                    color: "white",
+                                }}
                                 color="pink"
                                 variant="contained"
                                 onClick={handleOnClear}
@@ -142,7 +149,9 @@ export const DisplayOptions = ({
                                 Clear Filters
                             </Button>
                         </ThemeProvider>
-                    ) : null}
+                    ) : (
+                        <div id="empty" className="m-3"></div>
+                    )}
                 </div>
             </Modal>
             <SelectMulti
@@ -151,6 +160,8 @@ export const DisplayOptions = ({
                 type={selectedType}
                 setters={setters} //setters for cities,costs,ratings,parking..
                 clearMulti={clearMulti}
+                isMobile={isMobile}
+                setAllSelectedOptions={setAllSelectedOptions}
             />
         </div>
     );

@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 
-export const Search = ({ searchValueSetter}) => {
-
+export const Search = ({ searchValueSetter, size }) => {
     const [inputValue, setInputValue] = useState("");
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
@@ -20,9 +19,18 @@ export const Search = ({ searchValueSetter}) => {
     };
 
     return (
-        <div id="search-box" className="flex justify-center">
+        <div id="search-box" className="flex w-full justify-center">
             <TextField
-                sx={{ m: 1, width: "30%" }}
+                sx={{
+                    borderRadius: "0",
+                    width: size === "large" ? "40%" : "100%",
+                    "& .MuiOutlinedInput-root": {
+                        borderRadius: "0",
+                    },
+                    backgroundColor: "white",
+                }}
+                fullWidth={size != "large"}
+                size={size}
                 id="outlined-required"
                 label="Search"
                 value={inputValue}
