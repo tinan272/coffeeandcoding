@@ -8,8 +8,10 @@ import both_1 from "../../public/both-1.jpg";
 import both_2 from "../../public/both-2.jpg";
 import both_3 from "../../public/both-3.jpg";
 import both_4 from "../../public/both-4.jpg";
-import { Grid } from "@mui/material";
+import { Grid, ThemeProvider } from "@mui/material";
 import { motion } from "framer-motion";
+
+
 
 // flex-col = each subsequent div is a column
 // each grid row has a full length of 12 units. to do 50% of each, xs={6} for both
@@ -28,12 +30,12 @@ export default function page() {
     const amal_info = {
         name: "Amal Chaudry",
         src: amal_img,
-        bio: "Flibberty floo, the quizzle quozzle danced on the lumpy grumpet. Zim zam zoodle, the fluffer nutter snuck past",
+        bio: "Amal graduated with High Honor from Georgia Tech with a degree in Computer Science. She loves coffee, reading, soccer, and in unhealthily obsessed with Game of Thrones.",
     };
     const tina_info = {
         name: "Tina Nguyen",
         src: tina_img,
-        bio: "Flibberty floo, the quizzle quozzle danced on the lumpy grumpet. Zim zam zoodle, the fluffer nutter snuck past",
+        bio: "Tina graduated with Highest Honors from Georgia Tech with a degree in Computer Science. She is currently pursuing her Master's in CS at GT. She has two lovely dogs, Kobe and Kali. Tina loves coffee, makeup, and reading the Stromlight Archive.",
     };
     return (
         <div className="flex flex-col">
@@ -41,11 +43,7 @@ export default function page() {
             <div id="title" className="flex flex-col m-8 md:m-48">
                 <div className="text-xl md:text-3xl">Tina & Amal</div>
                 <div className="text-2xl md:text-6xl m-8 md:m-10">
-                    Flibberty floo, the quizzle quozzle danced on the lumpy
-                    grumpet. Zim zam zoodle, the fluffer nutter snuck past the
-                    giggly gorp. Hoppity hoop, the wingle wangle wobbled through
-                    the nippy nip. Squibble squab, the drizzy drozzle floated
-                    above the fizzy floop.
+                    Two besties with caffeine addictions and coding degrees.
                 </div>
             </div>
             <div
@@ -53,6 +51,19 @@ export default function page() {
                 className="bg-white w-full text-center py-10 md:py-20 text-xl md:text-4xl"
             >
                 WHO WE ARE
+            </div>
+            <div
+                id="title"
+                className="bg-white w-full text-center py-10 md:py-20 text-lg md:text-4xl"
+            >
+                
+                Hello coffee connoisseurs! We are Tina and Amal, two bestfriends since high school that decided to get computer science degrees together from Georgia Tech. 
+                We share a mutual love of coffee, and have been curating an extensive list of coffee shops around the Atlanta area for a few years now. As avid cafe hoppers,
+                we wanted a way to be able to see relevant information about the coffee shops we were visiting, like parking and WiFi availability, but we quickly found that
+                no coffee blog out there like this existed. Deciding to combine our two braincells together (along with our CS degrees) we decided we would build a coffee blog from scratch that would not 
+                only provide useful information, but also be a clean, aesthetic space where we could rant about the Atlanta coffee scene. We hope y'all enjoy!
+                
+                
             </div>
             <div className="flex w-full h-auto bg-white justify-around">
                 {[tina_info, amal_info].map((person, index) => (
