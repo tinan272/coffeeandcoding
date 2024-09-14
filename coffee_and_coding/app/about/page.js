@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Header from "../frontend/components/Header";
+import Header from "../frontend/components/SubLinkHeader";
 import Image from "next/image";
 import tina_img from "../../public/tina.JPG";
 import amal_img from "../../public/amal.JPG";
@@ -16,11 +16,6 @@ import { motion } from "framer-motion";
 /* <Link href="/">Back to home</Link> */
 
 export default function page() {
-    const links = [
-        { name: "Home", href: "/" },
-        { name: "Blog", href: "/blog" },
-        { name: "About Us", href: "/about" },
-    ];
     const imageVariants = {
         hidden: { opacity: 0, y: 50 },
         visible: { opacity: 1, y: 0 },
@@ -37,7 +32,7 @@ export default function page() {
     };
     return (
         <div className="flex flex-col">
-            <Header title="About Us" links={links} />
+            <Header title="About Us" />
             <div id="title" className="flex flex-col m-8 md:m-48">
                 <div className="text-xl md:text-3xl">Tina & Amal</div>
                 <div className="text-2xl md:text-6xl m-8 md:m-10">

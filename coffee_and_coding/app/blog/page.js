@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Header from "../frontend/components/Header";
+import Header from "../frontend/components/SubLinkHeader";
 import Link from "next/link";
 
 // flex-col = each subsequent div is a column
