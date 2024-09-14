@@ -15,6 +15,7 @@ import StarRateIcon from "@mui/icons-material/StarRate";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import Chip from "@mui/material/Chip";
+import { StarRating } from "./StarRating";
 
 import {
     useQueryParams,
@@ -204,15 +205,12 @@ export const ShopListDisplay = ({
                                         primary={
                                             <div className="flex">
                                                 <div>{cafe.name}</div>
-                                                <div className="ml-1 flex justify-center">
-                                                    {Array.from({
-                                                        length: cafe.rating,
-                                                    }).map((e, i) => (
-                                                        <StarRateIcon
-                                                            key={i}
-                                                            fontSize="small"
-                                                        />
-                                                    ))}
+                                                <div className="ml-1">
+                                                    <StarRating
+                                                        cafeRating={
+                                                            cafe.rating
+                                                        }
+                                                    />
                                                 </div>
                                             </div>
                                         }

@@ -1,24 +1,19 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MapContainer from "./frontend/components/MapContainer.jsx";
-import { Button, ListItemButton, ListSubheader } from "@mui/material";
 import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
 import { DisplayOptions } from "./frontend/components/DisplayOptions.jsx";
 import background_img from "../public/condesa-coffee-2.png";
 import Grid from "@mui/material/Grid";
-import Image from "next/image";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Box from "@mui/material/Box";
 import { IconButton } from "@mui/material";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { BrowserRouter } from "react-router-dom";
-import { useRouter } from "next/navigation";
 import { Search } from "./frontend/components/Search.jsx";
-import { createTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
-import Header from "./frontend/components/MobileHeader.jsx";
-import MobileHeader from "./frontend/components/MobileHeader.jsx";
+import Header from "./frontend/components/HomeHeader.jsx";
 
 export default function Home() {
     const [open, setOpen] = React.useState(0);
@@ -62,13 +57,6 @@ export default function Home() {
         console.log("clear all");
     };
 
-    const links = [
-        { name: "Home", href: "/" },
-        { name: "Blog", href: "/blog" },
-        { name: "About Us", href: "/about" },
-    ];
-
-    const router = useRouter();
     const isMobile = useMediaQuery("(max-width:768px)");
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -76,23 +64,13 @@ export default function Home() {
         <BrowserRouter>
             <QueryParamProvider adapter={ReactRouter6Adapter}>
                 <main className="relative flex min-h-screen w-full flex-col justify-between">
-                    {isMobile ? (
-                        <MobileHeader
-                            title={"coffee&coding"}
-                            links={links}
-                            img={background_img}
-                            isMobile={isMobile}
-                            menuOpen={mobileMenuOpen}
-                            setOpen={setMobileMenuOpen}
-                        />
-                    ) : (
-                        <Header
-                            title={"coffee&coding"}
-                            links={links}
-                            img={background_img}
-                        />
-                    )}
-
+                    <Header
+                        title={"coffee&coding"}
+                        img={background_img}
+                        isMobile={isMobile}
+                        menuOpen={mobileMenuOpen}
+                        setOpen={setMobileMenuOpen}
+                    />
                     <div className="flex-col pt-8 md:py-8 text-center w-100 text-2xl md:text-5xl font-light">
                         <div id="title">Coffee Shop Map</div>
                         <div>

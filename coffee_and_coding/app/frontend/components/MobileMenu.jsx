@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function MobileMenu({ title, links, open }) {
+export default function MobileMenu({ title, links }) {
     return (
         <div className="flex flex-col bg-blue w-full h-screen bg-black font-thin">
             <div className="pt-10 px-10 flex flex-row justify-between items-end">
@@ -17,9 +17,8 @@ export default function MobileMenu({ title, links, open }) {
             <div className="flex flex-col space-evenly justify-center items-center flex-grow text-lg md:text-4xl">
                 <div className="flex flex-col justify-evenly h-1/4 text-center">
                     {links.map((link, index) => (
-                        <div className="">
+                        <div className="" key={index}>
                             <Link
-                                key={index}
                                 href={link.href}
                                 id="link"
                                 className="text-4xl my-2 md:my-0 md:mx-6 gap-y-0.5"
