@@ -9,7 +9,7 @@ import MobileMenu from "../components/MobileMenu";
 
 export default function Header({ title, links, img }) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const isMobile = useMediaQuery("(max-width:768px)");
+    const isMobile = useMediaQuery("(max-width:430px)");
 
     return (
         <div className="flex text-white justify-center w-full h-full">

@@ -259,7 +259,8 @@ export const ShopListDisplay = ({
             <CoffeeShopPopup
                 handleOpen={open}
                 handleClose={handlePopupClose}
-                cafe={cafe}>              
+                cafe={cafe}
+                isMobile={isMobile}>              
             </CoffeeShopPopup>
             </div>
         </Paper>
