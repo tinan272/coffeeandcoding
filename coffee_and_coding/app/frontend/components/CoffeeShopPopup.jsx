@@ -37,7 +37,11 @@ export const CoffeeShopPopup = ({
     const [cafeComfort, setComfort] = useState();
     const [cafeWifi, setWifi] = useState("");
     const [cafeArea, setArea] = useState();
-    const [cafeRating, setRating] = useState();
+    const[cafeRating, setRating] = useState();
+    const [avgOverall, setAvgOverall] = useState();
+    const [avgAmbiance, setAvgAmbiance] = useState();
+    const [avgCoffee, setAvgCoffee] = useState();
+    const [avgService, setAvgService] = useState();
 
     // toggle switch
     const [checked, setChecked] = useState();
@@ -119,6 +123,10 @@ export const CoffeeShopPopup = ({
         }
         setArea(cafe ? cafe.area : "");
         setRating(cafe ? cafe.rating : "");
+        setAvgOverall(cafe ? cafe.overall_rating : "");
+        setAvgAmbiance(cafe ? cafe.ambiance_rating : "");
+        setAvgCoffee(cafe ? cafe.coffee_rating : "");
+        setAvgService(cafe ? cafe.service_rating : "");
         console.log(cafe);
         console.log(cafeWifi);
 
@@ -135,7 +143,7 @@ export const CoffeeShopPopup = ({
                     justifyContent: "center",
                 }}
             >
-                <div className={` flex  ${isMobile ? " flex-auto flex-col my-5 mx-5 min-w-96" : "flex-row size-full mx-10 my-10"}`}>
+                <div className={` flex  ${isMobile ? " flex-auto flex-col my-5 mx-5 min-w-96" : "flex-row size-full mx-10"}`}>
 
                     {/* photo carousel */}
                     <div className="flex-1  bg-cyan-500"></div>
@@ -163,6 +171,8 @@ export const CoffeeShopPopup = ({
                                                     ))}</span>
                                             </div>
 
+
+                                            {/* cafe info section */}
                                             <span className="text-left text-sm font-light text-gray mx-5">{cafeAddress}</span>
                                             <div className=" flex flex-1 flex-row flex-wrap justify-around mx-5">
                                                     <div className="flex my-5 sm:my-10 text-sm sm:text-lg text-center justify-items-center"> 
@@ -197,11 +207,10 @@ export const CoffeeShopPopup = ({
                                                             <span className="font-bold text-black-700">{"Area"}</span>
                                                             <span className=" text-gray-500">{cafeArea}</span>
                                                         </div>
-                                                
-                                    
                                                     </div>
                                             </div>
                                             
+                                            {/* additional notes section */}
                                             <div className="flex flex-col flex-wrap ">
                                                 <span className="text-left text-md sm:text-xl font-semibold text-black mx-5">{"Additional Notes"}</span>
 
@@ -217,17 +226,56 @@ export const CoffeeShopPopup = ({
 
                                                 <span className="text-left text-md sm:text-xl font-semibold text-black mx-5">{"Ratings"}</span>
 
-                                                
+                                                {/* toggle switch */}
                                                 <Stack direction="row" component="label" alignItems="center" justifyContent="center">
                                                     <Typography>Average Rating</Typography>
                                                     <RatingSwitch
+                                                        checked={checked}
+                                                        onChange={handleToggle}
                                                         icon={ <PeopleIcon fontSize="medium" sx={{backgroundColor: '#f7bad8', borderRadius: '50%'}}/>} 
                                                         checkedIcon={<PersonIcon fontSize="medium" sx={{backgroundColor: '#f7bad8', borderRadius: '50%'}}/>}
                                                         />
                                                     <Typography>Individual Rating</Typography>
                                                 </Stack>   
-                                                
                                             </div>
+
+                                            {/* ratings section */}
+                                            <div className=" flex flex-1 flex-row flex-wrap justify-around mx-5">
+                                                    <div className="flex my-5 sm:my-10 text-sm sm:text-lg text-center justify-items-center"> 
+                                                        <div className="flex  flex-col">
+                                                            <span className="font-bold text-black-700">{"Overall"}</span>
+                                                            <span className=" text-gray-500 text-center">{avgOverall}</span>
+                                                        </div>
+                                                
+                                                        <div className="flex mx-4">
+                                                            <Divider orientation="vertical" variant="middle" flexItem sx={{ background: 'black' }}/>
+                                                        </div>
+
+                                                        <div className="flex flex-col">
+                                                            <span className="font-bold text-black-700">{"Coffee"}</span>
+                                                            <span className=" text-gray-500 text-center">{avgCoffee}</span>
+                                                        </div>
+                                                
+                                                        <div className="flex mx-4">
+                                                            <Divider orientation="vertical" variant="middle" flexItem sx={{ background: 'black' }}/>
+                                                        </div>
+
+                                                        <div className="flex flex-col">
+                                                            <span className="font-bold text-black-700">{"Ambiance"}</span>
+                                                            <span className=" text-gray-500">{avgAmbiance}</span>
+                                                        </div>
+                                                
+                                                        <div className="flex mx-4">
+                                                            <Divider orientation="vertical" variant="middle" flexItem sx={{ background: 'black' }}/>
+                                                        </div>
+
+                                                        <div className="flex flex-col">
+                                                            <span className="font-bold text-black-700">{"Service"}</span>
+                                                            <span className=" text-gray-500">{avgService}</span>
+                                                        </div>
+                                                    </div>
+                                            </div>
+
                                         </div>    
                                 </ListItem>
                             </ThemeProvider>

@@ -285,7 +285,10 @@ export const ShopListDisplay = ({
                     area: cafe.Area,
                     wifi: cafe.Wifi,
                     parking_type: cafe.Parking_Type,
-                    rating: cafe.AvgOverallRating,
+                    overall_rating: cafe.AvgOverallRating,
+                    ambiance_rating: cafe.AvgAmbianceRating,
+                    coffee_rating: cafe.AvgCoffeeRating,
+                    service_rating: cafe.AvgServiceRating,
                 };
             });
             // console.log("type of", typeof cafes[0].rating);
