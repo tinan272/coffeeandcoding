@@ -17,6 +17,7 @@ import Switch from '@mui/material/Switch';
 import { styled } from '@mui/material/styles';
 import PersonIcon from '@mui/icons-material/Person';
 import PeopleIcon from '@mui/icons-material/People';
+import { StarRating } from "./StarRating";
 
 
 
@@ -162,13 +163,12 @@ export const CoffeeShopPopup = ({
                                             <div className="flex text-xl md:text-4xl font-semibold text-black items-center mx-5 my-2">
                                                 <span className="text-left">{cafeName}</span>
                                                 <span className="text-left">
-                                                    {Array.from({length: cafeRating,}).map((x, index) => (
-                                                        <StarRateIcon
-                                                        key={index}
-                                                        fontSize={isMobile ? "small" : "large"}
-                                                        className="mx-2 mb-1"
-                                                        />
-                                                    ))}</span>
+                                                    <StarRating
+                                                        cafeRating={avgOverall}
+                                                        starFont={isMobile ? "small" : "large"}
+                                                        
+                                                    />
+                                                </span>
                                             </div>
 
 

@@ -225,8 +225,9 @@ export const ShopListDisplay = ({
                                                 <div className="ml-1">
                                                     <StarRating
                                                         cafeRating={
-                                                            cafe.rating
+                                                            cafe.overall_rating
                                                         }
+                                                        starFont={"small"}
                                                     />
                                                 </div>
                                             </div>
