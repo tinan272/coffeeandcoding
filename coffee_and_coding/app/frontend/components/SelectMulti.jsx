@@ -63,6 +63,7 @@ export const SelectMulti = ({
             labelName: "Cost",
         },
         ratings: {
+            // TODO: RATING LABELS nums being used on shoplistdisplay...
             list: [1, 2, 3, 4, 5],
             labelName: "Rating",
         },

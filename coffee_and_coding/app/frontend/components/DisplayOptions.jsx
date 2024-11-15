@@ -107,7 +107,7 @@ export const DisplayOptions = ({
     return (
         <div>
             <Modal
-                open={openView}
+                open={openView ? true : false}
                 onClose={handleClose}
                 sx={{
                     display: "flex",
