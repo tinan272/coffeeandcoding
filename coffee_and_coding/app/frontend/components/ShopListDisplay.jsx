@@ -142,6 +142,10 @@ export const ShopListDisplay = ({
             goToPage(prevPage);
         }
     };
+
+    const convertCost = (repeatCount) => {
+        return "$".repeat(repeatCount);
+    };
     
     // coffee shop popup
     const [open, setOpen] = useState(false);
@@ -234,7 +238,7 @@ export const ShopListDisplay = ({
                                         }
                                         secondary={cafe.address}
                                     />
-                                    {cafe.cost}
+                                    <div>{convertCost(cafe.cost)}</div>
                                 </ListItem>
                             </ListItemButton>
                         ))}

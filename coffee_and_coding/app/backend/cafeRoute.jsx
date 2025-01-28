@@ -167,6 +167,8 @@ async function getCafes(client) {
                     $sort:
                         sort === "rating"
                             ? { AvgOverallRating: -1 }
+                            : sort === "cost"
+                            ? { Cost: -1 }
                             : { _id: 1 },
                 },
                 {
