@@ -11,6 +11,7 @@ import PageRight from "@mui/icons-material/ArrowCircleRightOutlined";
 import PageLeft from "@mui/icons-material/ArrowCircleLeftOutlined";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
+import { CoffeeShopPopup } from "./CoffeeShopPopup.jsx";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -145,6 +146,21 @@ export const ShopListDisplay = ({
     const convertCost = (repeatCount) => {
         return "$".repeat(repeatCount);
     };
+    
+    // coffee shop popup
+    const [open, setOpen] = useState(false);
+    const [cafe, setCafe] = useState();
+    
+    
+    const handlePopupClick = (cafe) => {
+        setOpen(true);
+        console.log("open val", open);
+        console.log("popup clicked");
+        setCafe(cafe);
+    }
+    
+    const handlePopupClose = () => setOpen(false);
+
 
     return (
         <Paper
@@ -204,6 +220,7 @@ export const ShopListDisplay = ({
                                         borderBottom: 1,
                                         borderColor: "divider",
                                     }}
+                                    onClick={ () => handlePopupClick(cafe) } 
                                 >
                                     <ListItemText
                                         primary={
@@ -211,7 +228,10 @@ export const ShopListDisplay = ({
                                                 <div>{cafe.name}</div>
                                                 <div className="ml-1">
                                                     <StarRating
-                                                        cafeRating={cafe.rating}
+                                                        cafeRating={
+                                                            cafe.overall_rating
+                                                        }
+                                                        starFont={"small"}
                                                     />
                                                 </div>
                                             </div>
@@ -238,6 +258,14 @@ export const ShopListDisplay = ({
                     </div>
                 </div>
             </Stack>
+            <div>
+            <CoffeeShopPopup
+                handleOpen={open}
+                handleClose={handlePopupClose}
+                cafe={cafe}
+                isMobile={isMobile}>              
+            </CoffeeShopPopup>
+            </div>
         </Paper>
     );
 
@@ -256,9 +284,14 @@ export const ShopListDisplay = ({
                     address: cafe.Address,
                     parking: cafe.Parking,
                     cost: cafe.Cost,
+                    comfort: cafe.Comfort,
                     area: cafe.Area,
+                    wifi: cafe.Wifi,
                     parking_type: cafe.Parking_Type,
-                    rating: cafe.AvgOverallRating,
+                    overall_rating: cafe.AvgOverallRating,
+                    ambiance_rating: cafe.AvgAmbianceRating,
+                    coffee_rating: cafe.AvgCoffeeRating,
+                    service_rating: cafe.AvgServiceRating,
                 };
             });
             // console.log("type of", typeof cafes[0].rating);

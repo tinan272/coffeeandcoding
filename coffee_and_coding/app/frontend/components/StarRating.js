@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 
-export const StarRating = ({ cafeRating }) => {
+export const StarRating = ({ cafeRating, starFont="small" }) => {
     const numFullStars = Math.floor(cafeRating);
     const hasHalfStar = cafeRating % 1 !== 0;
     return (
@@ -10,9 +10,9 @@ export const StarRating = ({ cafeRating }) => {
             {Array.from({
                 length: numFullStars,
             }).map((stars, index) => (
-                <StarRateIcon key={index} fontSize="small" />
+                <StarRateIcon key={index} fontSize={starFont} />
             ))}
-            {hasHalfStar && <StarHalfIcon fontSize="small" />}
+            {hasHalfStar && <StarHalfIcon fontSize={starFont} />}
         </div>
     );
 };

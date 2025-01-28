@@ -9,7 +9,7 @@ import MobileMenu from "./MobileMenu";
 
 export default function SubLinkHeader({ title }) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const isMobile = useMediaQuery("(max-width:768px)");
+    const isMobile = useMediaQuery("(max-width:430px)");
 
     const links = [
         { name: "Home", href: "/" },
