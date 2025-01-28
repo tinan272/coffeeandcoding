@@ -142,6 +142,10 @@ export const ShopListDisplay = ({
         }
     };
 
+    const convertCost = (repeatCount) => {
+        return "$".repeat(repeatCount);
+    };
+
     return (
         <Paper
             elevation={isMobile ? 0 : 4}
@@ -207,16 +211,14 @@ export const ShopListDisplay = ({
                                                 <div>{cafe.name}</div>
                                                 <div className="ml-1">
                                                     <StarRating
-                                                        cafeRating={
-                                                            cafe.rating
-                                                        }
+                                                        cafeRating={cafe.rating}
                                                     />
                                                 </div>
                                             </div>
                                         }
                                         secondary={cafe.address}
                                     />
-                                    {cafe.cost}
+                                    <div>{convertCost(cafe.cost)}</div>
                                 </ListItem>
                             </ListItemButton>
                         ))}
