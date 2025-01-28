@@ -16,7 +16,7 @@ export default function HomeHeader({
 }) {
     const links = [
         { name: "Home", href: "/" },
-        { name: "Blog", href: "/blog" },
+        // { name: "Blog", href: "/blog" },
         { name: "About Us", href: "/about" },
     ];
     return (

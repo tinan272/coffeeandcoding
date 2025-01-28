@@ -146,21 +146,19 @@ export const ShopListDisplay = ({
     const convertCost = (repeatCount) => {
         return "$".repeat(repeatCount);
     };
-    
+
     // coffee shop popup
     const [open, setOpen] = useState(false);
     const [cafe, setCafe] = useState();
-    
-    
+
     const handlePopupClick = (cafe) => {
         setOpen(true);
         console.log("open val", open);
         console.log("popup clicked");
         setCafe(cafe);
-    }
-    
-    const handlePopupClose = () => setOpen(false);
+    };
 
+    const handlePopupClose = () => setOpen(false);
 
     return (
         <Paper
@@ -220,7 +218,7 @@ export const ShopListDisplay = ({
                                         borderBottom: 1,
                                         borderColor: "divider",
                                     }}
-                                    onClick={ () => handlePopupClick(cafe) } 
+                                    onClick={() => handlePopupClick(cafe)}
                                 >
                                     <ListItemText
                                         primary={
@@ -259,12 +257,12 @@ export const ShopListDisplay = ({
                 </div>
             </Stack>
             <div>
-            <CoffeeShopPopup
-                handleOpen={open}
-                handleClose={handlePopupClose}
-                cafe={cafe}
-                isMobile={isMobile}>              
-            </CoffeeShopPopup>
+                <CoffeeShopPopup
+                    handleOpen={open}
+                    handleClose={handlePopupClose}
+                    cafe={cafe}
+                    isMobile={isMobile}
+                ></CoffeeShopPopup>
             </div>
         </Paper>
     );
@@ -287,6 +285,7 @@ export const ShopListDisplay = ({
                     comfort: cafe.Comfort,
                     area: cafe.Area,
                     wifi: cafe.Wifi,
+                    imageURL: cafe.ImageURL,
                     parking_type: cafe.Parking_Type,
                     overall_rating: cafe.AvgOverallRating,
                     ambiance_rating: cafe.AvgAmbianceRating,
@@ -294,7 +293,6 @@ export const ShopListDisplay = ({
                     service_rating: cafe.AvgServiceRating,
                 };
             });
-            // console.log("type of", typeof cafes[0].rating);
             return { cafes, totalPages };
         } catch (error) {
             console.log("error fetching cafe: ", error);

@@ -55,11 +55,17 @@ export const SelectMulti = ({
 
     const optionsDict = {
         cities: {
-            list: ["Brookwood Hills", "Midtown"],
+            list: [
+                "Brookwood Hills",
+                "Midtown",
+                "Westside Provisions",
+                "Georgia Tech",
+                "Downtown Atlanta",
+            ],
             labelName: "Area",
         },
         costs: {
-            list: ["$", "$$", "$$$"],
+            list: ["1", "2", "3"],
             labelName: "Cost",
         },
         ratings: {
