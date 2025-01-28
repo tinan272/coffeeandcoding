@@ -1,13 +1,23 @@
+const dotenv = require("dotenv").config();
+const prompt = require("prompt");
+var Dropbox = require("dropbox").Dropbox;
+var dbx = new Dropbox({
+    accessToken:
+        "sl.u.AFhZwRGnL8LE01yoo0qfAMPN3QGXKg4adsficAn2LeMf2RPximTJBtYmc_TIBQtK8820k0a7xAYYYdLB93PObC2RZxh_IxSdHMEezupB47VOfx7mMxsQvW5mr_gEkBKYGCM5gwdSX0FXpPXoCqBAdFemSWQkku-7nWZdoEfSw3GoV3vkbgrppd01m3z3t92TO48r8x65YbRm36fxiS6xml87AeNyhkKe6DfRVFEnFafsfo2kd4C86uz9X6GnQN_A8Jd0LSMpbQoylsOsdZEfHX_RSvnGL1lia1s8436Z-PmTzA8BMKxPd5JVSom08RBXQGHPJriV2BnLCbiIwWwXiAdjfaM_X7qZ9wuIEL-BOtDZgGs2-uHPiJXnZuN_O_-L0ZM-N3PQF5USRpVScyKRUOPU8z2DWbJ8wwk74E9_KK2lXagZ4R7ree86zuDQMQo8N5c82QrYgvNEMRJKHUBllUCE6YJ2gFn8-zD3NZ-7gVXecSIeI35h--0vpgIhu1uZSioWaUNFO1zbhKdyz5av-SqJp44twVaVFVE9JQoLFVDBxNDhynZCal9tLIXcnfE-pWY9xbHLI_npixYmqKUMAKHNzbsl68q_CLPalpZ4peQMkhhOZcBi5PhW6Jg40OIqTUBWIl_TgMMz54gX0WxcIaqDIlvFcxcfoxY_0syC1lBV0SzUJNPx_pA8wd2u0_jx8hIaPYxmN7-zHtCkshXVUVozg9yyVq2HJ7oPyHGRpBJf-z9a68xMt-UEpC6CepM4gY99_i06tX_ZS-DEk6hM0600VoBWKbWHMqeZnVihN4gSo7CgMoFKlou4MLHZoqtabk2aUAqPAIMk3AhfPuk0ryXIKOd0IXS83EefYz7N8icmIVo29NZSqACkVbGEwkDq-l0fRRB054eFrt_NEOIycJnjFJgUYkOg29n2ZR47LwDgTWwOZjuSgb-HIJdjbvEbaK8lx7aOB0IPN2ANSwqO5VrpHBlddTdC0WOvPc8XNbEHF43HrY3sIf2P7NkIXRjpowMnA2_7c-E_q1aFrPjfxGFfRo0DZoQiSY2J_5O02SX8UmgDQPtGa9PjQL1THht1vSeEENdUkUjYcJIeFN00ackpp8HbayclOt9fe8Vaz8Jqfm0AA3Chdukp-z91GQGjcID1dDWqPKo_0aaei8TkBOeZDRDWOCPM7bTvVg7NIYYM6styRbdvZAMQAbQcxKgd6NWnzjCPg1L6Nz-mrpZ2pqWtsXmhRo4mYqccrceK7yye5HqmiveCLjQwlXre9c0-lOuFpayHBJGpJ6Co8dVh-fsN",
+});
+dbx.filesListFolder({ path: "dropbox/images" })
+    .then(function (response) {
+        console.log("WHAT IS THE RESPONSE", response);
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+
 const express = require("express");
 const router = express.Router();
 const { countDocuments } = require("mongodb");
 
-// global variables
-let comboDocuments = [];
-
 async function getCafes(client) {
-    // shop database
-
     const database = await client.db("coffee_shop_data");
     const collection = await database.collection("coffee_info");
 
@@ -21,7 +31,6 @@ async function getCafes(client) {
             },
         },
         {
-            // breaks down "rating" arr so each obj is processed individually
             $unwind: {
                 path: "$Rating",
                 preserveNullAndEmptyArrays: true,
@@ -38,15 +47,15 @@ async function getCafes(client) {
                 Wifi: { $first: "$Wifi" },
                 Area: { $first: "$Area" },
                 Parking_Type: { $first: "$Parking_Type" },
-                Rating: { $push: "$Ratings" }, //push: collects individual docs for each coffee shop
-                AvgOverallRating: { $avg: "$Rating.Overall_Rating" }, // avg: calcs avg of field from all docs for each shop
+                Rating: { $push: "$Ratings" },
+                ImageURL: { $push: "$ImageURL" },
+                AvgOverallRating: { $avg: "$Rating.Overall_Rating" },
                 AvgAmbianceRating: { $avg: "$Rating.Ambiance_Rating" },
                 AvgCoffeeRating: { $avg: "$Rating.Coffee_Rating" },
                 AvgServiceRating: { $avg: "$Rating.Service_Rating" },
             },
         },
         {
-            // specifies how docs should be shaped moving forward?
             $project: {
                 _id: 0,
                 Name: 1,
@@ -58,6 +67,7 @@ async function getCafes(client) {
                 Area: 1,
                 Parking_Type: 1,
                 Ratings: 1,
+                ImageURL: 1,
                 AvgOverallRating: 1,
                 AvgAmbianceRating: 1,
                 AvgCoffeeRating: 1,
@@ -66,37 +76,19 @@ async function getCafes(client) {
         },
     ];
 
-    comboDocuments = await collection
+    const comboDocuments = await collection
         .aggregate(ratings_info_pipeline)
         .toArray();
     comboDocuments.forEach((doc) => {
         delete doc._id;
-    }); // keep only one _id
-
-    console.log(
-        "--------------------------------------------------------COMBINED TABLES--------------------------------------------------------"
-    );
-    comboDocuments.forEach((doc) => {
-        console.log(doc);
     });
 
-    // combined docs -> new collection
     const combinedCollection = database.collection("combined_coffee_info");
-    await combinedCollection.deleteMany({}); // Clear existing documents if needed
+    await combinedCollection.deleteMany({});
     await combinedCollection.insertMany(comboDocuments);
-
-    console.log(
-        "Combined documents inserted into 'combined_coffee_info' collection."
-    );
 
     const default_start_page = 1;
     const default_cafe_limit = 5;
-
-    if (!combinedCollection) {
-        return res
-            .status(500)
-            .json({ error: "Database connection not established" });
-    }
 
     router.get("/", async (req, res) => {
         try {
@@ -104,7 +96,6 @@ async function getCafes(client) {
             const pageSize =
                 parseInt(req.query.limit, 10) || default_cafe_limit;
 
-            // query params sent from frontend
             const filters = {
                 search: req.query.search || "",
                 city: req.query.city || [],
@@ -114,9 +105,6 @@ async function getCafes(client) {
             };
             const sort = req.query.sort || "";
 
-            console.log("Query Parameters:", filters, "Sort:", sort);
-
-            // creating query object to filter documents
             const query = {};
 
             if (filters.search) {
@@ -160,7 +148,6 @@ async function getCafes(client) {
                 query["$and"] = regexArray;
             }
 
-            // pagination pipeline
             const articles = [
                 { $match: query },
                 {
@@ -182,7 +169,6 @@ async function getCafes(client) {
                 },
             ];
 
-            // Ensure the database connection is established
             if (!combinedCollection) {
                 throw new Error("Database connection not established");
             }
