@@ -16,7 +16,6 @@ const filterOptions = {
     cities: "Area",
     // costs: "Cost",
     ratings: "Rating",
-    parking: "Parking",
 };
 const sortOptions = { 0: "Cost", 1: "Rating" };
 
