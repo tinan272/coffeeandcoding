@@ -25,7 +25,7 @@ import { styled } from "@mui/material/styles";
 import PersonIcon from "@mui/icons-material/Person";
 import PeopleIcon from "@mui/icons-material/People";
 import { StarRating } from "./StarRating";
-import { ImageGallery } from "./ImgGallery";
+import Ratings from "./Ratings";
 const dbx = new Dropbox({
     accessToken:
         "sl.u.AFhZwRGnL8LE01yoo0qfAMPN3QGXKg4adsficAn2LeMf2RPximTJBtYmc_TIBQtK8820k0a7xAYYYdLB93PObC2RZxh_IxSdHMEezupB47VOfx7mMxsQvW5mr_gEkBKYGCM5gwdSX0FXpPXoCqBAdFemSWQkku-7nWZdoEfSw3GoV3vkbgrppd01m3z3t92TO48r8x65YbRm36fxiS6xml87AeNyhkKe6DfRVFEnFafsfo2kd4C86uz9X6GnQN_A8Jd0LSMpbQoylsOsdZEfHX_RSvnGL1lia1s8436Z-PmTzA8BMKxPd5JVSom08RBXQGHPJriV2BnLCbiIwWwXiAdjfaM_X7qZ9wuIEL-BOtDZgGs2-uHPiJXnZuN_O_-L0ZM-N3PQF5USRpVScyKRUOPU8z2DWbJ8wwk74E9_KK2lXagZ4R7ree86zuDQMQo8N5c82QrYgvNEMRJKHUBllUCE6YJ2gFn8-zD3NZ-7gVXecSIeI35h--0vpgIhu1uZSioWaUNFO1zbhKdyz5av-SqJp44twVaVFVE9JQoLFVDBxNDhynZCal9tLIXcnfE-pWY9xbHLI_npixYmqKUMAKHNzbsl68q_CLPalpZ4peQMkhhOZcBi5PhW6Jg40OIqTUBWIl_TgMMz54gX0WxcIaqDIlvFcxcfoxY_0syC1lBV0SzUJNPx_pA8wd2u0_jx8hIaPYxmN7-zHtCkshXVUVozg9yyVq2HJ7oPyHGRpBJf-z9a68xMt-UEpC6CepM4gY99_i06tX_ZS-DEk6hM0600VoBWKbWHMqeZnVihN4gSo7CgMoFKlou4MLHZoqtabk2aUAqPAIMk3AhfPuk0ryXIKOd0IXS83EefYz7N8icmIVo29NZSqACkVbGEwkDq-l0fRRB054eFrt_NEOIycJnjFJgUYkOg29n2ZR47LwDgTWwOZjuSgb-HIJdjbvEbaK8lx7aOB0IPN2ANSwqO5VrpHBlddTdC0WOvPc8XNbEHF43HrY3sIf2P7NkIXRjpowMnA2_7c-E_q1aFrPjfxGFfRo0DZoQiSY2J_5O02SX8UmgDQPtGa9PjQL1THht1vSeEENdUkUjYcJIeFN00ackpp8HbayclOt9fe8Vaz8Jqfm0AA3Chdukp-z91GQGjcID1dDWqPKo_0aaei8TkBOeZDRDWOCPM7bTvVg7NIYYM6styRbdvZAMQAbQcxKgd6NWnzjCPg1L6Nz-mrpZ2pqWtsXmhRo4mYqccrceK7yye5HqmiveCLjQwlXre9c0-lOuFpayHBJGpJ6Co8dVh-fsN",
@@ -61,6 +61,10 @@ export const CoffeeShopPopup = ({
     const [avgAmbiance, setAvgAmbiance] = useState();
     const [avgCoffee, setAvgCoffee] = useState();
     const [avgService, setAvgService] = useState();
+    const [indivOverall, setIndivOverall] = useState();
+    const [indivAmbiance, setIndivAmbiance] = useState();
+    const [indivCoffee, setIndivCoffee] = useState();
+    const [indivService, setIndivService] = useState();
     const [cafeImageURL, setCafeImageURL] = useState("/cafecomma.jpg");
     //
     // toggle switch
@@ -146,6 +150,10 @@ export const CoffeeShopPopup = ({
         setAvgAmbiance(cafe ? cafe.ambiance_rating : "");
         setAvgCoffee(cafe ? cafe.coffee_rating : "");
         setAvgService(cafe ? cafe.service_rating : "");
+        setIndivOverall(cafe ? cafe.overall_rating_i : []);
+        setIndivAmbiance(cafe ? cafe.ambiance_rating_i : []);
+        setIndivCoffee(cafe ? cafe.coffee_rating_i : []);
+        setIndivService(cafe ? cafe.service_rating_i : []);
         setCafeImageURL(cafe ? cafe.imageURL : ""); // Assuming cafe.images is an array of image URLs
         console.log(cafe);
         console.log(cafeWifi);
@@ -366,78 +374,51 @@ export const CoffeeShopPopup = ({
                                         </div>
 
                                         {/* ratings section */}
-                                        <div className=" flex flex-1 flex-row flex-wrap justify-around mx-5">
-                                            <div className="flex my-5 sm:my-10 text-sm sm:text-lg text-center justify-items-center">
-                                                <div className="flex  flex-col">
-                                                    <span className="font-bold text-black-700">
-                                                        {"Overall"}
-                                                    </span>
-                                                    <span className=" text-gray-500 text-center">
-                                                        {avgOverall}
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex mx-4">
-                                                    <Divider
-                                                        orientation="vertical"
-                                                        variant="middle"
-                                                        flexItem
-                                                        sx={{
-                                                            background: "black",
-                                                        }}
-                                                    />
-                                                </div>
-
-                                                <div className="flex flex-col">
-                                                    <span className="font-bold text-black-700">
-                                                        {"Coffee"}
-                                                    </span>
-                                                    <span className=" text-gray-500 text-center">
-                                                        {avgCoffee}
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex mx-4">
-                                                    <Divider
-                                                        orientation="vertical"
-                                                        variant="middle"
-                                                        flexItem
-                                                        sx={{
-                                                            background: "black",
-                                                        }}
-                                                    />
-                                                </div>
-
-                                                <div className="flex flex-col">
-                                                    <span className="font-bold text-black-700">
-                                                        {"Ambiance"}
-                                                    </span>
-                                                    <span className=" text-gray-500">
-                                                        {avgAmbiance}
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex mx-4">
-                                                    <Divider
-                                                        orientation="vertical"
-                                                        variant="middle"
-                                                        flexItem
-                                                        sx={{
-                                                            background: "black",
-                                                        }}
-                                                    />
-                                                </div>
-
-                                                <div className="flex flex-col">
-                                                    <span className="font-bold text-black-700">
-                                                        {"Service"}
-                                                    </span>
-                                                    <span className=" text-gray-500">
-                                                        {avgService}
-                                                    </span>
+                                        {!checked ? (
+                                            <div className="flex my-5 sm:my-10 text-sm sm:text-lg text-center justify-center">
+                                                <Ratings
+                                                    overall={avgOverall}
+                                                    coffee={avgCoffee}
+                                                    service={avgService}
+                                                    ambiance={avgAmbiance}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="flex my-5 sm:my-10 text-sm sm:text-lg text-center justify-center">
+                                                <div className="justify-center">
+                                                    <Stack>
+                                                        <Ratings
+                                                            overall={
+                                                                indivOverall[0]
+                                                            }
+                                                            coffee={
+                                                                indivCoffee[0]
+                                                            }
+                                                            service={
+                                                                indivService[0]
+                                                            }
+                                                            ambiance={
+                                                                indivAmbiance[0]
+                                                            }
+                                                        />
+                                                        <Ratings
+                                                            overall={
+                                                                indivOverall[0]
+                                                            }
+                                                            coffee={
+                                                                indivCoffee[0]
+                                                            }
+                                                            service={
+                                                                indivService[0]
+                                                            }
+                                                            ambiance={
+                                                                indivAmbiance[0]
+                                                            }
+                                                        />
+                                                    </Stack>
                                                 </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </div>
                                 </ListItem>
                             </ThemeProvider>

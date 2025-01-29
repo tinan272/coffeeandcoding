@@ -277,6 +277,7 @@ export const ShopListDisplay = ({
             console.log(response.data);
             const cafes = cafeData.map((cafe) => {
                 console.log("this is the rating", cafe.AvgOverallRating);
+
                 return {
                     name: cafe.Name,
                     address: cafe.Address,
@@ -291,6 +292,10 @@ export const ShopListDisplay = ({
                     ambiance_rating: cafe.AvgAmbianceRating,
                     coffee_rating: cafe.AvgCoffeeRating,
                     service_rating: cafe.AvgServiceRating,
+                    overall_rating_i: cafe.OverallRating,
+                    ambiance_rating_i: cafe.AmbianceRating,
+                    coffee_rating_i: cafe.CoffeeRating,
+                    service_rating_i: cafe.ServiceRating,
                 };
             });
             return { cafes, totalPages };

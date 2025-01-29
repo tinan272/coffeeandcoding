@@ -53,6 +53,10 @@ async function getCafes(client) {
                 AvgAmbianceRating: { $avg: "$Rating.Ambiance_Rating" },
                 AvgCoffeeRating: { $avg: "$Rating.Coffee_Rating" },
                 AvgServiceRating: { $avg: "$Rating.Service_Rating" },
+                OverallRating: { $push: "$Rating.Overall_Rating" },
+                AmbianceRating: { $push: "$Rating.Ambiance_Rating" },
+                CoffeeRating: { $push: "$Rating.Coffee_Rating" },
+                ServiceRating: { $push: "$Rating.Service_Rating" },
             },
         },
         {
@@ -72,6 +76,10 @@ async function getCafes(client) {
                 AvgAmbianceRating: 1,
                 AvgCoffeeRating: 1,
                 AvgServiceRating: 1,
+                OverallRating: 1,
+                AmbianceRating: 1,
+                CoffeeRating: 1,
+                ServiceRating: 1,
             },
         },
     ];

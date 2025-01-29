@@ -14,7 +14,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 const filterOptions = {
     cities: "Area",
-    costs: "Cost",
+    // costs: "Cost",
     ratings: "Rating",
     parking: "Parking",
 };
