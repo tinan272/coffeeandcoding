@@ -21,7 +21,7 @@
     "express": "^4.19.2",
     "google-map-react": "^2.2.1",
     "mongodb": "^6.6.2",
-    "next": "^14.1.0",
+    "next": "^15.1.6",
     "next-usequerystate": "^1.17.4",
     "node.js": "^0.0.1-security",
     "nuqs": "^1.17.4",

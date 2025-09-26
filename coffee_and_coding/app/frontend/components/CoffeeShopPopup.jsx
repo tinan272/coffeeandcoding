@@ -1,23 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
 import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import { SelectMulti } from "./SelectMulti";
 import { Dropbox } from "dropbox";
-import {
-    Button,
-    ListSubheader,
-    ThemeProvider,
-    Typography,
-} from "@mui/material";
-
+import { ThemeProvider, Typography } from "@mui/material";
 import theme from "./theme.jsx";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import StarRateIcon from "@mui/icons-material/StarRate";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Switch from "@mui/material/Switch";
@@ -48,25 +36,29 @@ export const CoffeeShopPopup = ({
     isMobile,
 }) => {
     // cafe info variables
-    const [cafeName, setName] = useState("");
-    const [cafeAddress, setAddress] = useState();
-    const [cafeParking, setParking] = useState();
-    const [cafeParkingType, setParkingType] = useState();
-    const [cafeCost, setCost] = useState();
-    const [cafeComfort, setComfort] = useState();
-    const [cafeWifi, setWifi] = useState("");
-    const [cafeArea, setArea] = useState();
-    const [cafeRating, setRating] = useState();
-    const [avgOverall, setAvgOverall] = useState();
-    const [avgAmbiance, setAvgAmbiance] = useState();
-    const [avgCoffee, setAvgCoffee] = useState();
-    const [avgService, setAvgService] = useState();
-    const [indivOverall, setIndivOverall] = useState();
-    const [indivAmbiance, setIndivAmbiance] = useState();
-    const [indivCoffee, setIndivCoffee] = useState();
-    const [indivService, setIndivService] = useState();
-    const [cafeImageURL, setCafeImageURL] = useState("/cafecomma.jpg");
-    //
+    const cafeDetails = useMemo(() => {
+        return {
+            name: cafe?.name || "",
+            address: cafe?.address || "",
+            parking: cafe?.parking || "",
+            parkingType: cafe?.parking_type || "",
+            cost: cafe?.cost || "",
+            comfort: cafe?.comfort || "",
+            wifi: cafe?.wifi ?? "unknown",
+            area: cafe?.area || "",
+            rating: cafe?.rating || "",
+            overall: cafe?.overall_rating || "",
+            ambiance: cafe?.ambiance_rating || "",
+            coffee: cafe?.coffee_rating || "",
+            service: cafe?.service_rating || "",
+            indivOverall: cafe?.overall_rating_i || [],
+            indivAmbiance: cafe?.ambiance_rating_i || [],
+            indivCoffee: cafe?.coffee_rating_i || [],
+            indivService: cafe?.service_rating_i || [],
+            imageURL: cafe?.imageURL || "/cafecomma.jpg",
+        };
+    }, [cafe]);
+
     // toggle switch
     const [checked, setChecked] = useState();
 
@@ -132,33 +124,6 @@ export const CoffeeShopPopup = ({
         },
     }));
 
-    useEffect(() => {
-        setName(cafe ? cafe.name : "");
-        setAddress(cafe ? cafe.address : "");
-        setParking(cafe ? cafe.parking : "");
-        setParkingType(cafe ? cafe.parking_type : "");
-        setCost(cafe ? cafe.cost : "");
-        setComfort(cafe ? cafe.comfort : "");
-        console.log(cafeComfort);
-        setWifi(cafe ? cafe.wifi : "");
-        if (cafe && cafe.wifi == null) {
-            setWifi("unknown");
-        }
-        setArea(cafe ? cafe.area : "");
-        setRating(cafe ? cafe.rating : "");
-        setAvgOverall(cafe ? cafe.overall_rating : "");
-        setAvgAmbiance(cafe ? cafe.ambiance_rating : "");
-        setAvgCoffee(cafe ? cafe.coffee_rating : "");
-        setAvgService(cafe ? cafe.service_rating : "");
-        setIndivOverall(cafe ? cafe.overall_rating_i : []);
-        setIndivAmbiance(cafe ? cafe.ambiance_rating_i : []);
-        setIndivCoffee(cafe ? cafe.coffee_rating_i : []);
-        setIndivService(cafe ? cafe.service_rating_i : []);
-        setCafeImageURL(cafe ? cafe.imageURL : ""); // Assuming cafe.images is an array of image URLs
-        console.log(cafe);
-        console.log(cafeWifi);
-    }, [cafe]);
-
     return (
         <div>
             <Modal
@@ -206,17 +171,19 @@ export const CoffeeShopPopup = ({
                                         <div className="flex text-xl md:text-4xl font-semibold text-black items-center mx-5 my-2">
                                             <span className="text-left">
                                                 <a
-                                                    href={cafeImageURL}
+                                                    href={cafeDetails.imageURL}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="text-blue-500 underline"
                                                 >
-                                                    {cafeName}
+                                                    {cafeDetails.name}
                                                 </a>
                                             </span>
                                             <span className="text-left">
                                                 <StarRating
-                                                    cafeRating={avgOverall}
+                                                    cafeRating={
+                                                        cafeDetails.overall
+                                                    }
                                                     starFont={
                                                         isMobile
                                                             ? "small"
@@ -228,7 +195,7 @@ export const CoffeeShopPopup = ({
 
                                         {/* cafe info section */}
                                         <span className="text-left text-sm font-light text-gray mx-5">
-                                            {cafeAddress}
+                                            {cafeDetails.address}
                                         </span>
                                         <div className=" flex flex-1 flex-row flex-wrap justify-around mx-5">
                                             <div className="flex my-5 sm:my-10 text-sm sm:text-lg text-center justify-items-center">
@@ -237,7 +204,9 @@ export const CoffeeShopPopup = ({
                                                         {"Parking"}
                                                     </span>
                                                     <span className=" text-gray-500 text-center">
-                                                        {cafeParkingType}
+                                                        {
+                                                            cafeDetails.parkingType
+                                                        }
                                                     </span>
                                                 </div>
 
@@ -257,7 +226,7 @@ export const CoffeeShopPopup = ({
                                                         {"Cost"}
                                                     </span>
                                                     <span className=" text-gray-500 text-center">
-                                                        {cafeCost}
+                                                        {cafeDetails.cost}
                                                     </span>
                                                 </div>
 
@@ -277,7 +246,7 @@ export const CoffeeShopPopup = ({
                                                         {"WiFi"}
                                                     </span>
                                                     <span className=" text-gray-500">
-                                                        {cafeWifi.toString()}
+                                                        {cafeDetails.wifi.toString()}
                                                     </span>
                                                 </div>
 
@@ -297,7 +266,7 @@ export const CoffeeShopPopup = ({
                                                         {"Area"}
                                                     </span>
                                                     <span className=" text-gray-500">
-                                                        {cafeArea}
+                                                        {cafeDetails.area}
                                                     </span>
                                                 </div>
                                             </div>
@@ -314,7 +283,7 @@ export const CoffeeShopPopup = ({
                                                     {"Parking: "}
                                                 </span>
                                                 <span className="text-left font-normal text-black ml-2">
-                                                    {cafeParking}
+                                                    {cafeDetails.parking}
                                                 </span>
                                             </div>
 
@@ -323,7 +292,7 @@ export const CoffeeShopPopup = ({
                                                     {"Comfort: "}
                                                 </span>
                                                 <span className="text-left font-normal text-black ml-2">
-                                                    {cafeComfort}
+                                                    {cafeDetails.comfort}
                                                 </span>
                                             </div>
 
@@ -377,10 +346,22 @@ export const CoffeeShopPopup = ({
                                         {!checked ? (
                                             <div className="flex my-5 sm:my-10 text-sm sm:text-lg text-center justify-center">
                                                 <Ratings
-                                                    overall={avgOverall}
-                                                    coffee={avgCoffee}
-                                                    service={avgService}
-                                                    ambiance={avgAmbiance}
+                                                    overall={
+                                                        cafeDetails
+                                                            .indivOverall[0]
+                                                    }
+                                                    coffee={
+                                                        cafeDetails
+                                                            .indivCoffee[0]
+                                                    }
+                                                    service={
+                                                        cafeDetails
+                                                            .indivService[0]
+                                                    }
+                                                    ambiance={
+                                                        cafeDetails
+                                                            .indivAmbiance[0]
+                                                    }
                                                 />
                                             </div>
                                         ) : (
@@ -389,30 +370,38 @@ export const CoffeeShopPopup = ({
                                                     <Stack>
                                                         <Ratings
                                                             overall={
-                                                                indivOverall[0]
+                                                                cafeDetails
+                                                                    .indivOverall[0]
                                                             }
                                                             coffee={
-                                                                indivCoffee[0]
+                                                                cafeDetails
+                                                                    .indivCoffee[0]
                                                             }
                                                             service={
-                                                                indivService[0]
+                                                                cafeDetails
+                                                                    .indivService[0]
                                                             }
                                                             ambiance={
-                                                                indivAmbiance[0]
+                                                                cafeDetails
+                                                                    .indivAmbiance[0]
                                                             }
                                                         />
                                                         <Ratings
                                                             overall={
-                                                                indivOverall[0]
+                                                                cafeDetails
+                                                                    .indivOverall[1]
                                                             }
                                                             coffee={
-                                                                indivCoffee[0]
+                                                                cafeDetails
+                                                                    .indivCoffee[1]
                                                             }
                                                             service={
-                                                                indivService[0]
+                                                                cafeDetails
+                                                                    .indivService[1]
                                                             }
                                                             ambiance={
-                                                                indivAmbiance[0]
+                                                                cafeDetails
+                                                                    .indivAmbiance[1]
                                                             }
                                                         />
                                                     </Stack>

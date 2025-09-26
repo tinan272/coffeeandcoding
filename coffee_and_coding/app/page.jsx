@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import MapContainer from "./frontend/components/MapContainer.jsx";
 import { ShopListDisplay } from "./frontend/components/ShopListDisplay.jsx";
 import { DisplayOptions } from "./frontend/components/DisplayOptions.jsx";
@@ -7,15 +7,14 @@ import background_img from "../public/condesa-coffee-2.png";
 import Grid from "@mui/material/Grid";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Box from "@mui/material/Box";
-import { IconButton } from "@mui/material";
+import { useMediaQuery, IconButton } from "@mui/material";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { BrowserRouter } from "react-router-dom";
 import { Search } from "./frontend/components/Search.jsx";
-import { useMediaQuery } from "@mui/material";
 import Header from "./frontend/components/HomeHeader.jsx";
 
-export default function Home() {
+export function useFilterState() {
     const [open, setOpen] = React.useState(0);
     const [filterType, setFilterType] = useState(0); // State to track the filter type (sorting or filtering)
     const [selectedCities, setSelectedCities] = useState([]);
@@ -24,7 +23,6 @@ export default function Home() {
     const [selectedParking, setSelectedParking] = useState([]);
     const [selectedSortValue, setSelectedSortValue] = useState(null);
     const [searchValue, setSearchValue] = useState("");
-    const [allSelectedOptions, setAllSelectedOptions] = useState([]);
 
     const setters = {
         cities: setSelectedCities,
@@ -32,21 +30,25 @@ export default function Home() {
         ratings: setSelectedRating,
         parking: setSelectedParking,
     };
-    const selectedFilterValues = {
-        cities: selectedCities,
-        costs: selectedCosts,
-        ratings: selectedRating,
-        parkings: selectedParking,
-    };
+    const selectedFilterValues = useMemo(
+        () => ({
+            cities: selectedCities,
+            costs: selectedCosts,
+            ratings: selectedRating,
+            parkings: selectedParking,
+        }),
+        [selectedCities, selectedCosts, selectedRating, selectedParking]
+    );
 
-    const handleFilterClick = (type) => {
+    const handleFilterClick = useCallback((type) => {
+        // useCallback to develop SINGLE instance when passed down to MEMOIZED children
         setFilterType(type);
         setOpen(true);
-    };
+    }, []);
 
-    const handleFilterClose = () => {
+    const handleFilterClose = useCallback(() => {
         setOpen(false);
-    };
+    }, [setOpen]);
 
     const onClear = () => {
         setSearchValue("");
@@ -56,6 +58,54 @@ export default function Home() {
         setSelectedParking([]);
         console.log("clear all");
     };
+
+    const updateFilters = useCallback((updates) => {
+        if (updates.cities !== undefined) setSelectedCities(updates.cities);
+        if (updates.costs !== undefined) setSelectedCosts(updates.costs);
+        if (updates.ratings !== undefined) setSelectedRating(updates.ratings);
+        if (updates.parking !== undefined) setSelectedParking(updates.parking);
+        if (updates.sortValue !== undefined)
+            setSelectedSortValue(updates.sortValue);
+        if (updates.searchValue !== undefined)
+            setSearchValue(updates.searchValue);
+    }, []);
+
+    return {
+        // State values
+        open,
+        filterType,
+        selectedCities,
+        selectedCosts,
+        selectedRating,
+        selectedParking,
+        selectedSortValue,
+        searchValue,
+
+        // Derived state
+        setters,
+        selectedFilterValues,
+
+        // State setters
+        setOpen,
+        setFilterType,
+        setSelectedCities,
+        setSelectedCosts,
+        setSelectedRating,
+        setSelectedParking,
+        setSelectedSortValue,
+        setSearchValue,
+
+        // Handlers
+        handleFilterClick,
+        handleFilterClose,
+        onClear,
+        updateFilters,
+    };
+}
+
+export default function Home() {
+    const filters = useFilterState();
+    const [allSelectedOptions, setAllSelectedOptions] = useState([]);
 
     const isMobile = useMediaQuery("(max-width:768px)");
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -100,19 +150,25 @@ export default function Home() {
                                     sx={isMobile ? { mx: 4 } : {}}
                                 >
                                     <Search
-                                        searchValueSetter={setSearchValue}
+                                        searchValueSetter={
+                                            filters.setSearchValue
+                                        }
                                         size={isMobile ? "small" : "large"}
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={6} className="mx-0">
                                     <ShopListDisplay
                                         selectedFilterValues={
-                                            selectedFilterValues
+                                            filters.selectedFilterValues
                                         }
-                                        selectedSortValue={selectedSortValue}
-                                        searchInputValue={searchValue}
+                                        selectedSortValue={
+                                            filters.selectedSortValue
+                                        }
+                                        searchInputValue={filters.searchValue}
                                         isMobile={isMobile}
-                                        handleFilterClick={handleFilterClick}
+                                        handleFilterClick={
+                                            filters.handleFilterClick
+                                        }
                                         allSelectedOptions={allSelectedOptions}
                                     />
                                 </Grid>
@@ -140,14 +196,14 @@ export default function Home() {
                     </div>
                     <div>
                         <DisplayOptions //sorting or filtering options
-                            type={filterType}
-                            openView={open}
-                            handleClose={handleFilterClose}
-                            selectedFilterValues={selectedFilterValues}
-                            selectedSortValue={selectedSortValue} // "Rating"
-                            setSelectedSortValue={setSelectedSortValue} // "Rating"
-                            setters={setters}
-                            onClear={onClear}
+                            type={filters.filterType}
+                            openView={filters.open}
+                            handleClose={filters.handleFilterClose}
+                            selectedFilterValues={filters.selectedFilterValues}
+                            selectedSortValue={filters.selectedSortValue} // "Rating"
+                            setSelectedSortValue={filters.setSelectedSortValue} // "Rating"
+                            setters={filters.setters}
+                            onClear={filters.onClear}
                             isMobile={isMobile}
                             setAllSelectedOptions={setAllSelectedOptions}
                         />
