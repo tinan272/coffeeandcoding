@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -7,10 +7,15 @@ import ListItemText from "@mui/material/ListItemText";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { SelectMulti } from "./SelectMulti";
-import { Button, ListSubheader, ThemeProvider } from "@mui/material";
+import { Button, ThemeProvider } from "@mui/material";
 import axios from "axios";
 import theme from "./theme.jsx";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 const filterOptions = {
     cities: "Area",
@@ -62,15 +67,12 @@ export const DisplayOptions = ({
     const handleOpenSortOrFilter = (key) => {
         if (type === 1) {
             handleOpenMultiView(key);
+        } else if (key == selectedSortValue) {
+            setSelectedSortValue(null);
         } else {
-            if (key == selectedSortValue) {
-                setSelectedSortValue(null);
-            } else {
-                setSelectedSortValue(key);
-            }
+            setSelectedSortValue(key);
         }
     };
-
     const renderOptions = (optionsDict) => {
         return Object.entries(optionsDict).map(([key, option]) => (
             <ListItemButton
@@ -107,7 +109,7 @@ export const DisplayOptions = ({
     return (
         <div>
             <Modal
-                open={openView ? true : false}
+                open={openView}
                 onClose={handleClose}
                 sx={{
                     display: "flex",
