@@ -76,16 +76,6 @@ export const ShopListDisplay = ({
         fetchCafes();
     }, [query, currPage]);
 
-    const handleSetSort = () => {
-        if (!query.sort) {
-            setSort("rating");
-        } else if (query.sort === "rating") {
-            setSort("cost");
-        } else {
-            setSort(null); // reset
-        }
-    };
-
     const goToPage = (pageNum) => {
         if (pageNum >= 1 && pageNum <= cafeInfo.totalPages) {
             setCurrPage(pageNum);
