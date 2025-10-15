@@ -17,6 +17,8 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import Chip from "@mui/material/Chip";
 import { StarRating } from "./StarRating";
 import PropTypes from "prop-types";
+import { storage } from "../../backend/firebase.js";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import {
     useQueryParams,
