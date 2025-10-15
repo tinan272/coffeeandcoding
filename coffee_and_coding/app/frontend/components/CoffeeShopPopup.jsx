@@ -55,7 +55,7 @@ export const CoffeeShopPopup = ({
             indivAmbiance: cafe?.ambiance_rating_i || [],
             indivCoffee: cafe?.coffee_rating_i || [],
             indivService: cafe?.service_rating_i || [],
-            imageURL: cafe?.imageURL || "/cafecomma.jpg",
+            imageURL: cafe?.imageURL || [],
         };
     }, [cafe]);
 
@@ -96,7 +96,6 @@ export const CoffeeShopPopup = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-
             "& + .MuiSvgIcon-root": {
                 fontSize: "small", // Icon size
                 color: "#fff", // Icon color
@@ -143,18 +142,23 @@ export const CoffeeShopPopup = ({
                 // }`}
                 >
                     {/* photo carousel */}
-                    {/* <div className="flex-1 bg-white justifyCenter">
-                        <span className="text-gray-500 text-center">
-                            <a
-                                href={cafeImageURL}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-500 underline"
-                            >
-                                {cafeImageURL}
-                            </a>
-                        </span>
-                    </div> */}
+                    <div className="flex-1 bg-white justifyCenter">
+                        {cafeDetails.imageURL &&
+                            cafeDetails.imageURL.map((img, idx) => {
+                                return (
+                                    <img
+                                        key={idx}
+                                        src={img}
+                                        alt={img}
+                                        style={{
+                                            width: "100%",
+                                            maxHeight: "400px",
+                                            objectFit: "cover",
+                                        }}
+                                    />
+                                );
+                            })}
+                    </div>
                     {/* coffee shop info */}
                     <div className=" flex flex-1  bg-white">
                         <List sx={{ marginTop: "1rem", width: "100%" }}>
