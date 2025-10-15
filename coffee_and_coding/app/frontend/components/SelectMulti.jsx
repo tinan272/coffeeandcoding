@@ -1,60 +1,18 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Modal from "@mui/material/Modal";
+import { useFilters } from "../../FilterContext.jsx";
 
-export const SelectMulti = ({
-    type,
-    openMultiView,
-    handleClose,
-    setters,
-    clearMulti,
-    isMobile,
-    setAllSelectedOptions,
-}) => {
-    const [selectedOptions, setSelectedOptions] = useState([]);
-    useEffect(() => {
-        if (clearMulti) {
-            setSelectedOptions([]);
-        }
-    }, [clearMulti]);
-
-    useEffect(() => {
-        setAllSelectedOptions(selectedOptions);
-    }, [selectedOptions]);
-
-    const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        const newSelectedOptions =
-            typeof value === "string" ? value.split(",") : value;
-        setSelectedOptions(newSelectedOptions);
-        let options = value.filter((option) => {
-            switch (type) {
-                case "cities":
-                    console.log(optionsDict.cities.list.includes(option));
-                    return optionsDict.cities.list.includes(option);
-                case "costs":
-                    return optionsDict.costs.list.includes(option);
-                case "ratings":
-                    return optionsDict.ratings.list.includes(option);
-                case "parking":
-                    return optionsDict.parking.list.includes(option);
-                default:
-                    return "Not found";
-            }
-        });
-        setters[type](options);
-        setAllSelectedOptions(selectedOptions);
-    };
+export const SelectMulti = ({ type, openMultiView, handleClose }) => {
+    const { filters, updateCity, updateCost, updateRating, updateParking } =
+        useFilters();
 
     const optionsDict = {
-        // NEED TO CHANGE THIS LATER
         cities: {
             list: [
                 "Brookwood Hills",
@@ -70,8 +28,7 @@ export const SelectMulti = ({
             labelName: "Cost",
         },
         ratings: {
-            // TODO: RATING LABELS nums being used on shoplistdisplay...
-            list: [1, 2, 3, 4, 5],
+            list: ["1", "2", "3", "4", "5"],
             labelName: "Rating",
         },
         parking: {
@@ -85,6 +42,41 @@ export const SelectMulti = ({
             labelName: "Parking",
         },
     };
+
+    // Map type to the correct filter values and update function
+    const filterMap = {
+        cities: { values: filters.cities, update: updateCity },
+        costs: { values: filters.costs, update: updateCost },
+        ratings: { values: filters.ratings, update: updateRating }, // Note: plural "ratings"
+        parking: { values: filters.parkings, update: updateParking },
+    };
+
+    // Get current selections from context
+    const currentFilter = filterMap[type];
+    const selectedOptions = currentFilter?.values || [];
+
+    console.log("SelectMulti - type:", type); // Debug
+    console.log("SelectMulti - selectedOptions:", selectedOptions); // Debug
+    console.log("SelectMulti - filters:", filters); // Debug
+
+    // Handle selection changes - updates URL immediately
+    const handleChange = (event) => {
+        const value = event.target.value;
+        console.log("Selected values:", value); // Debug log
+        console.log("Type of values:", typeof value[0]); // Debug log
+        console.log("Current filter:", currentFilter); // Debug log
+
+        if (currentFilter) {
+            // Ensure values are strings for URL params
+            const stringValues = Array.isArray(value)
+                ? value.map((v) => String(v))
+                : [String(value)];
+            console.log("Updating with:", stringValues); // Debug log
+            currentFilter.update(stringValues);
+        }
+    };
+
+    if (!type || !optionsDict[type]) return null;
 
     return (
         <div>
@@ -102,7 +94,7 @@ export const SelectMulti = ({
                         className="p-5 z-10 text-xl font-bold"
                         id="light-pink-fill"
                     >
-                        {optionsDict[type]?.labelName}
+                        {optionsDict[type].labelName}
                     </div>
                     <FormControl
                         sx={{
@@ -114,17 +106,21 @@ export const SelectMulti = ({
                             id="demo-multiple-name-label"
                             sx={{ textAlign: "center" }}
                         >
-                            {optionsDict[type]?.labelName}
+                            {optionsDict[type].labelName}
                         </InputLabel>
 
                         <Select
-                            label="select"
+                            label={optionsDict[type].labelName}
                             multiple
                             value={selectedOptions}
                             onChange={handleChange}
-                            input={<OutlinedInput label="Name" />}
+                            input={
+                                <OutlinedInput
+                                    label={optionsDict[type].labelName}
+                                />
+                            }
                         >
-                            {optionsDict[type]?.list.map((option) => (
+                            {optionsDict[type].list.map((option) => (
                                 <MenuItem key={option} value={option}>
                                     {option}
                                 </MenuItem>
