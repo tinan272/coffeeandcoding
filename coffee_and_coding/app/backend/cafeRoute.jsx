@@ -5,6 +5,7 @@ const { countDocuments } = require("mongodb");
 async function getCafes(client) {
     const database = await client.db("coffee_shop_data");
     const collection = await database.collection("coffee_info");
+    
 
     const ratings_info_pipeline = [
         {
@@ -32,7 +33,8 @@ async function getCafes(client) {
                 Wifi: { $first: "$Wifi" },
                 Area: { $first: "$Area" },
                 Parking_Type: { $first: "$Parking_Type" },
-                Rating: { $push: "$Ratings" },
+                Rating: { $push: "$Rating" }, //push: collects individual docs for each coffee shop
+                RowBoolean: { $first: "$Rating.Row_Boolean"},    
                 ImageURL: { $push: "$ImageURL" },
                 AvgOverallRating: { $avg: "$Rating.Overall_Rating" },
                 AvgAmbianceRating: { $avg: "$Rating.Ambiance_Rating" },
@@ -55,12 +57,13 @@ async function getCafes(client) {
                 Wifi: 1,
                 Area: 1,
                 Parking_Type: 1,
-                Ratings: 1,
+                Rating: 1,
                 ImageURL: 1,
                 AvgOverallRating: 1,
                 AvgAmbianceRating: 1,
                 AvgCoffeeRating: 1,
                 AvgServiceRating: 1,
+                RowBoolean: 1,
                 OverallRating: 1,
                 AmbianceRating: 1,
                 CoffeeRating: 1,
@@ -105,52 +108,37 @@ async function getCafes(client) {
                 parseInt(req.query.limit, 10) || default_cafe_limit;
 
             const filters = {
-                search: req.query.search || "",
-                city: req.query.city || [],
-                cost: req.query.cost || [],
-                parking: req.query.parking || [],
-                rating: req.query.rating || [],
+                search: req.query.search,
+                city: req.query.city,
+                cost: req.query.cost,
+                parking: req.query.parking,
+                rating: req.query.rating,
             };
-            const sort = req.query.sort || "";
+            const sort = req.query.sort;
 
             const query = {};
-
+            // filtering documents based on search value
             if (filters.search) {
                 query["$or"] = [
                     { Name: { $regex: filters.search, $options: "i" } },
                     { Address: { $regex: filters.search, $options: "i" } },
                 ];
             }
-
-            if (filters.city && filters.city.length > 0) {
-                query["Area"] = {
-                    $in: Array.isArray(filters.city)
-                        ? filters.city
-                        : [filters.city],
-                };
+            // filtering based on city value
+            if (filters.city) {
+                query["Area"] = { $in: filters.city };
             }
-
-            if (filters.cost && filters.cost.length > 0) {
-                query["Cost"] = {
-                    $in: Array.isArray(filters.cost)
-                        ? filters.cost
-                        : [filters.cost],
-                };
+            // filtering based on cost
+            if (filters.cost) {
+                query["Cost"] = { $in: filters.cost };
             }
-
-            if (filters.rating && filters.rating.length > 0) {
-                const ratingNumbers = Array.isArray(filters.rating)
-                    ? filters.rating.map(Number)
-                    : [Number(filters.rating)];
+            if (filters.rating) {
+                const ratingNumbers = filters.rating.map(Number);
                 query["AvgOverallRating"] = { $in: ratingNumbers };
             }
-
+            // filtering based on parking type
             if (filters.parking && filters.parking.length > 0) {
-                const regexArray = (
-                    Array.isArray(filters.parking)
-                        ? filters.parking
-                        : [filters.parking]
-                ).map((parkingType) => ({
+                const regexArray = filters.parking.map((parkingType) => ({
                     Parking_Type: { $regex: parkingType, $options: "i" },
                 }));
                 query["$and"] = regexArray;
@@ -158,14 +146,7 @@ async function getCafes(client) {
 
             const articles = [
                 { $match: query },
-                {
-                    $sort:
-                        sort === "rating"
-                            ? { AvgOverallRating: -1 }
-                            : sort === "cost"
-                            ? { Cost: -1 }
-                            : { _id: 1 },
-                },
+                { $sort: { AvgOverallRating: -1 } },
                 {
                     $facet: {
                         metadata: [{ $count: "totalCount" }],
@@ -185,38 +166,26 @@ async function getCafes(client) {
                 .aggregate(articles)
                 .toArray();
 
-            if (!filteredResults || filteredResults.length === 0) {
-                return res.json({
-                    cafes: [],
-                    totalPages: 0,
-                    currentPage: page,
-                    pageSize: pageSize,
-                    totalCount: 0,
-                });
-            }
-
             const totalCount = filteredResults[0].metadata[0]
                 ? filteredResults[0].metadata[0].totalCount
                 : 0;
+            console.log("testing filter on area and cost", filteredResults);
 
             const response = {
-                cafes: filteredResults[0].data || [],
+                cafes: filteredResults[0].data,
                 totalPages: Math.ceil(totalCount / pageSize),
                 currentPage: page,
                 pageSize: pageSize,
                 totalCount: totalCount,
             };
-
             res.json(response);
         } catch (error) {
-            console.error("Error in GET / route:", error);
+            console.error("error getting documents", error);
             res.status(500).json({
                 error: "An error occurred while fetching the cafes.",
-                details: error.message,
             });
         }
     });
-
     return router;
 }
 

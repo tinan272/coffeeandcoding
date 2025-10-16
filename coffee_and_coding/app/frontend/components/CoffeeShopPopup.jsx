@@ -3,6 +3,10 @@ import React, { useMemo, useState, useEffect } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import { SelectMulti } from "./SelectMulti";
+import { convertCost } from "./ShopListDisplay";
+import { Button, ListSubheader, ThemeProvider, Typography } from "@mui/material";
 import { Dropbox } from "dropbox";
 import { ThemeProvider, Typography } from "@mui/material";
 import theme from "./theme.jsx";
@@ -64,6 +68,8 @@ export const CoffeeShopPopup = ({
 
     const handleToggle = (event) => {
         setChecked(event.target.checked);
+
+
     };
     console.log(checked);
 
@@ -123,6 +129,32 @@ export const CoffeeShopPopup = ({
         },
     }));
 
+    useEffect(() => {
+        setName(cafe ? cafe.name : "");
+        setAddress(cafe ? cafe.address : "");
+        setParking(cafe ? cafe.parking : "");
+        setParkingType(cafe ? cafe.parking_type : "");
+        setCost(cafe ? cafe.cost : "");
+        setComfort(cafe ? cafe.comfort : "");
+        console.log(cafeComfort);
+        setWifi(cafe ? cafe.wifi : "");
+        if(cafe && cafe.wifi == null) {
+            setWifi("unknown");
+        }
+        setArea(cafe ? cafe.area : "");
+        setRating(cafe ? cafe.individual_ratings : "");
+        setAvgOverall(cafe ? cafe.overall_rating : "");
+        setAvgAmbiance(cafe ? cafe.ambiance_rating : "");
+        setAvgCoffee(cafe ? cafe.coffee_rating : "");
+        setAvgService(cafe ? cafe.service_rating : "");
+
+        console.log(cafe);
+        console.log(cafeWifi);
+        console.log(cafeRating[0]);
+
+    },[cafe]);
+
+    
     return (
         <div>
             <Modal
@@ -225,14 +257,14 @@ export const CoffeeShopPopup = ({
                                                     />
                                                 </div>
 
-                                                <div className="flex flex-col">
-                                                    <span className="font-bold text-black-700">
-                                                        {"Cost"}
-                                                    </span>
-                                                    <span className=" text-gray-500 text-center">
-                                                        {cafeDetails.cost}
-                                                    </span>
-                                                </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="font-bold text-black-700">{"Cost"}</span>
+                                                            <span className=" text-gray-500 text-center">{convertCost(cafeCost)}</span>
+                                                        </div>
+                                                
+                                                        <div className="flex mx-4">
+                                                            <Divider orientation="vertical" variant="middle" flexItem sx={{ background: 'black' }}/>
+                                                        </div>
 
                                                 <div className="flex mx-4">
                                                     <Divider

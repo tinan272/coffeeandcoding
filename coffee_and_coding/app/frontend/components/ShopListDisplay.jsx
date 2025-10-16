@@ -18,6 +18,10 @@ import Chip from "@mui/material/Chip";
 import { StarRating } from "./StarRating";
 import { useFilters } from "../../FilterContext.jsx";
 
+export const convertCost = (repeatCount) => {
+        return "$".repeat(repeatCount);
+    };
+
 export const ShopListDisplay = ({
     isMobile,
     handleFilterClick,
@@ -94,6 +98,7 @@ export const ShopListDisplay = ({
             goToPage(prevPage);
         }
     };
+    
 
     const convertCost = (repeatCount) => {
         return "$".repeat(repeatCount);
@@ -223,4 +228,39 @@ export const ShopListDisplay = ({
             </div>
         </Paper>
     );
+
+    async function getCafeInfo(query) {
+        try {
+            const response = await axios.get("http://localhost:8083/cafe_api", {
+                params: { ...query, limit: 5 },
+            });
+            const cafeData = response.data.cafes;
+            const totalPages = response.data.totalPages;
+            console.log(response.data);
+            const cafes = cafeData.map((cafe) => {
+                console.log("this is the rating", cafe.AvgOverallRating);
+                return {
+                    name: cafe.Name,
+                    address: cafe.Address,
+                    parking: cafe.Parking,
+                    cost: cafe.Cost,
+                    comfort: cafe.Comfort,
+                    area: cafe.Area,
+                    wifi: cafe.Wifi,
+                    parking_type: cafe.Parking_Type,
+                    individual_ratings: cafe.Rating,
+                    overall_rating: cafe.AvgOverallRating,
+                    ambiance_rating: cafe.AvgAmbianceRating,
+                    coffee_rating: cafe.AvgCoffeeRating,
+                    service_rating: cafe.AvgServiceRating,
+                    row_boolean: cafe.RowBoolean,
+                };
+            });
+            // console.log("type of", typeof cafes[0].rating);
+            return { cafes, totalPages };
+        } catch (error) {
+            console.log("error fetching cafe: ", error);
+            return [];
+        }
+    }
 };
