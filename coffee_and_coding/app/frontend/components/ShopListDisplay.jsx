@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import Paper from "@mui/material/Paper";
-import { Button, ListSubheader, ThemeProvider } from "@mui/material";
+import { ListSubheader } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
@@ -12,128 +12,80 @@ import PageLeft from "@mui/icons-material/ArrowCircleLeftOutlined";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import { CoffeeShopPopup } from "./CoffeeShopPopup.jsx";
-import StarRateIcon from "@mui/icons-material/StarRate";
-import SwapVertIcon from "@mui/icons-material/SwapVert";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import SortIcon from "@mui/icons-material/Sort";
+import TuneIcon from "@mui/icons-material/Tune";
 import Chip from "@mui/material/Chip";
 import { StarRating } from "./StarRating";
-
-import {
-    useQueryParams,
-    NumberParam,
-    StringParam,
-    ArrayParam,
-} from "use-query-params";
+import { useFilters } from "../../FilterContext.jsx";
 
 export const convertCost = (repeatCount) => {
         return "$".repeat(repeatCount);
     };
 
 export const ShopListDisplay = ({
-    searchInputValue,
-    selectedFilterValues,
-    selectedSortValue,
     isMobile,
     handleFilterClick,
     allSelectedOptions,
 }) => {
-    const staticShops = [
-        { name: "Cafe Comma", description: "Good", area: "Atlanta", score: 4 },
-        {
-            name: "Summit Coffee",
-            description: "Great ambiance",
-            area: "Roswell",
-            score: 5,
-        },
-        {
-            name: "Cool Beans",
-            description: "Great ambiance",
-            area: "Marietta",
-            score: 3,
-        },
-    ];
-
-    const { cities, costs, ratings, parkings } = selectedFilterValues;
+    const { query, setSort } = useFilters();
 
     // setting filter/search bar values
     const [cafeInfo, setCafeInfo] = useState({ cafes: [], totalPages: 0 });
-
-    // for syncing query parameters in real time & sending to backend server
-    const [query, setQuery] = useQueryParams({
-        search: StringParam,
-        sort: StringParam,
-        city: ArrayParam,
-        cost: ArrayParam,
-        rating: ArrayParam,
-        parking: ArrayParam,
-        page: NumberParam,
-        limit: NumberParam,
-    });
-
     const [currPage, setCurrPage] = useState(1);
     const [totalPages, setTotalPages] = useState(5);
 
-    const {
-        city: areaName,
-        cost: cafeCost,
-        rating: cafeRating,
-        parking: cafeParking,
-        limit,
-    } = query || {};
-    // console.log("this is the query", query);
-
-    // getting cafe info and setting it
     useEffect(() => {
-        getCafeInfo(query).then((cafeData) => {
-            setCafeInfo(cafeData);
-            setTotalPages(cafeData.totalPages);
-        });
-    }, [query]);
+        const fetchCafes = async () => {
+            try {
+                const response = await axios.get(
+                    "http://localhost:8083/cafe_api",
+                    {
+                        params: {
+                            ...query,
+                            page: currPage,
+                            limit: 5,
+                        },
+                    }
+                );
 
-    useEffect(() => {
-        handleSearch(searchInputValue);
-        handleCost(costs);
-        handleCity(cities);
-        handleRating(ratings);
-        handleParking(parkings);
-        handleSort(selectedSortValue);
-    });
+                setCafeInfo({
+                    cafes: response.data.cafes.map((cafe) => ({
+                        name: cafe.Name,
+                        address: cafe.Address,
+                        parking: cafe.Parking,
+                        cost: cafe.Cost,
+                        comfort: cafe.Comfort,
+                        area: cafe.Area,
+                        wifi: cafe.Wifi,
+                        rating: cafe.Rating,
+                        imageURL: cafe.ImageURL,
+                        parking_type: cafe.Parking_Type,
+                        overall_rating: cafe.AvgOverallRating,
+                        ambiance_rating: cafe.AvgAmbianceRating,
+                        coffee_rating: cafe.AvgCoffeeRating,
+                        service_rating: cafe.AvgServiceRating,
+                        overall_rating_i: cafe.OverallRating,
+                        ambiance_rating_i: cafe.AmbianceRating,
+                        coffee_rating_i: cafe.CoffeeRating,
+                        service_rating_i: cafe.ServiceRating,
+                    })),
+                    totalPages: response.data.totalPages,
+                });
+            } catch (error) {
+                console.log("error fetching cafe: ", error);
+                setCafeInfo({ cafes: [], totalPages: 0 });
+            }
+        };
 
-    const handleSearch = (inputValue) => {
-        setQuery({ search: inputValue });
-    };
-
-    const handleSort = (inputValue) => {
-        var sortToString = " ";
-        if (inputValue == "0") {
-            sortToString = "cost";
-        } else {
-            sortToString = "rating";
-        }
-        setQuery({ sort: sortToString });
-    };
-    const handleCity = (selectedCities) => {
-        setQuery({ city: selectedCities });
-    };
-
-    const handleCost = (selectedCost) => {
-        setQuery({ cost: selectedCost });
-    };
-
-    const handleRating = (selectedRating) => {
-        setQuery({ rating: selectedRating });
-    };
-
-    const handleParking = (selectedParking) => {
-        setQuery({ parking: selectedParking });
-    };
+        fetchCafes();
+    }, [query, currPage]);
 
     const goToPage = (pageNum) => {
-        if (pageNum >= 1 && pageNum <= totalPages) {
+        if (pageNum >= 1 && pageNum <= cafeInfo.totalPages) {
             setCurrPage(pageNum);
-            setQuery({ ...query, page: pageNum });
         }
     };
+
     const goToNextPage = () => {
         if (currPage < totalPages) {
             const nextPage = currPage + 1;
@@ -147,20 +99,23 @@ export const ShopListDisplay = ({
         }
     };
     
+
+    const convertCost = (repeatCount) => {
+        return "$".repeat(repeatCount);
+    };
+
     // coffee shop popup
     const [open, setOpen] = useState(false);
     const [cafe, setCafe] = useState();
-    
-    
+
     const handlePopupClick = (cafe) => {
         setOpen(true);
         console.log("open val", open);
         console.log("popup clicked");
         setCafe(cafe);
-    }
-    
-    const handlePopupClose = () => setOpen(false);
+    };
 
+    const handlePopupClose = () => setOpen(false);
 
     return (
         <Paper
@@ -178,18 +133,23 @@ export const ShopListDisplay = ({
                         </ListSubheader>
                         <div className="text-sm flex float-right">
                             <IconButton
-                                sx={{
-                                    color: "black",
-                                    borderRadius: "0",
-                                }}
-                                color="pink"
-                                variant="contained"
-                                onClick={() => handleFilterClick(0)} //0 = sort
+                                sx={{ color: "black", borderRadius: "0" }}
+                                onClick={() => setSort("rating")}
                             >
-                                <div className="text-sm">Sort</div>
-                                <SwapVertIcon
+                                <SortIcon
                                     fontSize={isMobile ? "small" : "medium"}
                                 />
+                                <div className="text-sm">Rating</div>
+                            </IconButton>
+
+                            <IconButton
+                                sx={{ color: "black", borderRadius: "0" }}
+                                onClick={() => setSort("cost")}
+                            >
+                                <SortIcon
+                                    fontSize={isMobile ? "small" : "medium"}
+                                />
+                                <div className="text-sm">Cost</div>
                             </IconButton>
                             <IconButton
                                 sx={{
@@ -200,10 +160,10 @@ export const ShopListDisplay = ({
                                 variant="contained"
                                 onClick={() => handleFilterClick(1)} //1= sort
                             >
-                                <div className="text-sm">Filter</div>
-                                <FilterListIcon
+                                <TuneIcon
                                     fontSize={isMobile ? "small" : "medium"}
                                 />
+                                <div className="text-sm">Filter</div>
                             </IconButton>
                         </div>
                     </div>
@@ -220,7 +180,7 @@ export const ShopListDisplay = ({
                                         borderBottom: 1,
                                         borderColor: "divider",
                                     }}
-                                    onClick={ () => handlePopupClick(cafe) } 
+                                    onClick={() => handlePopupClick(cafe)}
                                 >
                                     <ListItemText
                                         primary={
@@ -259,12 +219,12 @@ export const ShopListDisplay = ({
                 </div>
             </Stack>
             <div>
-            <CoffeeShopPopup
-                handleOpen={open}
-                handleClose={handlePopupClose}
-                cafe={cafe}
-                isMobile={isMobile}>              
-            </CoffeeShopPopup>
+                <CoffeeShopPopup
+                    handleOpen={open}
+                    handleClose={handlePopupClose}
+                    cafe={cafe}
+                    isMobile={isMobile}
+                ></CoffeeShopPopup>
             </div>
         </Paper>
     );

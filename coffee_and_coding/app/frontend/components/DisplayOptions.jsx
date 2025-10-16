@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -7,35 +7,30 @@ import ListItemText from "@mui/material/ListItemText";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { SelectMulti } from "./SelectMulti";
-import { Button, ListSubheader, ThemeProvider } from "@mui/material";
-import axios from "axios";
+import { Button, ThemeProvider } from "@mui/material";
 import theme from "./theme.jsx";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { useFilters } from "../../FilterContext";
 
 const filterOptions = {
     cities: "Area",
-    costs: "Cost",
+    // costs: "Cost",
     ratings: "Rating",
-    parking: "Parking",
 };
 const sortOptions = { 0: "Cost", 1: "Rating" };
 
 export const DisplayOptions = ({
-    type, // sort or filter
-    openView, // open select view
-    handleClose, // close view
-    setters, // setters for cities, cost, rating, parking
-    onClear, // clear all setters + select multi
-    selectedFilterValues, // "$$", "Atlanta" if those were selecte
-    selectedSortValue, // "cost" or "rating"
-    setSelectedSortValue, // stores chosen sort value
+    type, // 0 = sort, 1 = filter
+    openView, // open modal
+    handleClose, // close modal
     isMobile,
-    setAllSelectedOptions,
 }) => {
     const [openMultiView, setOpenMultiView] = useState(false);
     const [selectedType, setSelectedType] = useState(null);
-    const { cities, costs, ratings, parking } = selectedFilterValues;
     const [clearMulti, setClearMulti] = useState(false);
+
+    // Get everything from context
+    const { filters, setSort, clearAll } = useFilters();
 
     const handleOpenMultiView = (selectedType) => {
         setSelectedType(selectedType);
@@ -47,26 +42,33 @@ export const DisplayOptions = ({
     };
 
     const handleOnClear = () => {
-        onClear();
+        clearAll();
         setClearMulti((prev) => !prev);
     };
 
     const getSelectedValues = (key) => {
-        if (selectedFilterValues.hasOwnProperty(key)) {
-            return selectedFilterValues[key].join(", ");
-        } else {
-            return "";
-        }
+        // Map the key to the correct filter value
+        const filterMap = {
+            cities: filters.cities,
+            costs: filters.costs,
+            ratings: filters.ratings,
+            parkings: filters.parkings,
+        };
+
+        const values = filterMap[key] || [];
+        return values.join(", ");
     };
 
     const handleOpenSortOrFilter = (key) => {
         if (type === 1) {
+            // Filter mode - open multi-select
             handleOpenMultiView(key);
         } else {
-            if (key == selectedSortValue) {
-                setSelectedSortValue(null);
+            // Sort mode - toggle sort value
+            if (key == filters.sort) {
+                setSort(null);
             } else {
-                setSelectedSortValue(key);
+                setSort(key);
             }
         }
     };
@@ -92,10 +94,10 @@ export const DisplayOptions = ({
                         paddingLeft: "1rem",
                     }}
                     primary={option}
-                    secondary={getSelectedValues(key)} // Display selected values here
+                    secondary={getSelectedValues(key)}
                 />
-                {!type && // if type == 1, sort, then display the checked icon on btn
-                    selectedSortValue === key && (
+                {!type && // Sort mode - show checkmark for selected sort
+                    filters.sort === key && (
                         <Box>
                             <CheckCircleOutlineIcon fontSize="medium" />
                         </Box>
@@ -107,7 +109,7 @@ export const DisplayOptions = ({
     return (
         <div>
             <Modal
-                open={openView ? true : false}
+                open={openView}
                 onClose={handleClose}
                 sx={{
                     display: "flex",
@@ -130,11 +132,11 @@ export const DisplayOptions = ({
                             }}
                         >
                             {type
-                                ? renderOptions(filterOptions) // filter: area, cost, rating, parking
+                                ? renderOptions(filterOptions)
                                 : renderOptions(sortOptions)}
                         </ListItem>
                     </List>
-                    {type ? ( // if type == true (filter), then display clear filters
+                    {type ? (
                         <ThemeProvider theme={theme}>
                             <Button
                                 sx={{
@@ -158,10 +160,6 @@ export const DisplayOptions = ({
                 openMultiView={openMultiView}
                 handleClose={onCloseMultiView}
                 type={selectedType}
-                setters={setters} //setters for cities,costs,ratings,parking..
-                clearMulti={clearMulti}
-                isMobile={isMobile}
-                setAllSelectedOptions={setAllSelectedOptions}
             />
         </div>
     );

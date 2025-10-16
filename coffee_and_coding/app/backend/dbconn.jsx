@@ -24,9 +24,10 @@ async function connectMongoDB() {
             "Pinged your deployment. You successfully connected to MongoDB!"
         );
         return client;
-    } catch(error) {
+    } catch (error) {
         console.error("error connecting to MongoDB:", error);
         throw error;
     }
 }
+
 module.exports = connectMongoDB;

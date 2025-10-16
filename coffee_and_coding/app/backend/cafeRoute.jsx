@@ -2,12 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { countDocuments } = require("mongodb");
 
-// global variables
-let comboDocuments = [];
-
 async function getCafes(client) {
-    // shop database
-
     const database = await client.db("coffee_shop_data");
     const collection = await database.collection("coffee_info");
     
@@ -22,7 +17,6 @@ async function getCafes(client) {
             },
         },
         {
-            // breaks down "rating" arr so each obj is processed individually
             $unwind: {
                 path: "$Rating",
                 preserveNullAndEmptyArrays: true,
@@ -40,15 +34,19 @@ async function getCafes(client) {
                 Area: { $first: "$Area" },
                 Parking_Type: { $first: "$Parking_Type" },
                 Rating: { $push: "$Rating" }, //push: collects individual docs for each coffee shop
-                AvgOverallRating: { $avg: "$Rating.Overall_Rating" }, // avg: calcs avg of field from all docs for each shop
+                RowBoolean: { $first: "$Rating.Row_Boolean"},    
+                ImageURL: { $push: "$ImageURL" },
+                AvgOverallRating: { $avg: "$Rating.Overall_Rating" },
                 AvgAmbianceRating: { $avg: "$Rating.Ambiance_Rating" },
                 AvgCoffeeRating: { $avg: "$Rating.Coffee_Rating" },
                 AvgServiceRating: { $avg: "$Rating.Service_Rating" },
-                RowBoolean: { $first: "$Rating.Row_Boolean"},
+                OverallRating: { $push: "$Rating.Overall_Rating" },
+                AmbianceRating: { $push: "$Rating.Ambiance_Rating" },
+                CoffeeRating: { $push: "$Rating.Coffee_Rating" },
+                ServiceRating: { $push: "$Rating.Service_Rating" },
             },
         },
         {
-            // specifies how docs should be shaped moving forward?
             $project: {
                 _id: 0,
                 Name: 1,
@@ -60,37 +58,45 @@ async function getCafes(client) {
                 Area: 1,
                 Parking_Type: 1,
                 Rating: 1,
+                ImageURL: 1,
                 AvgOverallRating: 1,
                 AvgAmbianceRating: 1,
                 AvgCoffeeRating: 1,
                 AvgServiceRating: 1,
                 RowBoolean: 1,
+                OverallRating: 1,
+                AmbianceRating: 1,
+                CoffeeRating: 1,
+                ServiceRating: 1,
             },
         },
     ];
 
-    comboDocuments = await collection
+    const comboDocuments = await collection
         .aggregate(ratings_info_pipeline)
         .toArray();
     comboDocuments.forEach((doc) => {
         delete doc._id;
-    }); // keep only one _id
-
-    console.log(
-        "--------------------------------------------------------COMBINED TABLES--------------------------------------------------------"
-    );
-    comboDocuments.forEach((doc) => {
-        console.log(doc);
     });
 
-    // combined docs -> new collection
     const combinedCollection = database.collection("combined_coffee_info");
-    await combinedCollection.deleteMany({}); // Clear existing documents if needed
+    comboDocuments.forEach((doc) => {
+        if (
+            doc.ImageURL &&
+            typeof doc.ImageURL === "string" &&
+            doc.ImageURL.includes(",")
+        ) {
+            doc.ImageURL = doc.ImageURL.split(",");
+        } else if (doc.ImageURL && typeof doc.ImageURL === "string") {
+            doc.ImageURL = [doc.ImageURL.trim()];
+        } else if (Array.isArray(doc.ImageURL)) {
+            doc.ImageURL = doc.ImageURL.filter((url) => url && url.length > 0);
+        } else {
+            doc.ImageURL = [];
+        }
+    });
+    await combinedCollection.deleteMany({});
     await combinedCollection.insertMany(comboDocuments);
-
-    console.log(
-        "Combined documents inserted into 'combined_coffee_info' collection."
-    );
 
     const default_start_page = 1;
     const default_cafe_limit = 5;
@@ -101,7 +107,6 @@ async function getCafes(client) {
             const pageSize =
                 parseInt(req.query.limit, 10) || default_cafe_limit;
 
-            // query params sent from frontend
             const filters = {
                 search: req.query.search,
                 city: req.query.city,
@@ -111,16 +116,6 @@ async function getCafes(client) {
             };
             const sort = req.query.sort;
 
-            console.log("Query Parameters:");
-            console.log("Search:", filters.search);
-            console.log("Sort:", sort);
-            console.log("City:", filters.city);
-            console.log("Cost:", filters.cost);
-            console.log("Parking:", filters.parking);
-            console.log("Rating:", filters.rating);
-            console.log("router working");
-
-            // creating query object to filter documents
             const query = {};
             // filtering documents based on search value
             if (filters.search) {
@@ -149,7 +144,6 @@ async function getCafes(client) {
                 query["$and"] = regexArray;
             }
 
-            // pagination pipeline
             const articles = [
                 { $match: query },
                 { $sort: { AvgOverallRating: -1 } },
@@ -164,8 +158,10 @@ async function getCafes(client) {
                 },
             ];
 
-            //TODO: access overall rating to compare with
-            // filtering documents and sending to api endpoint
+            if (!combinedCollection) {
+                throw new Error("Database connection not established");
+            }
+
             const filteredResults = await combinedCollection
                 .aggregate(articles)
                 .toArray();
