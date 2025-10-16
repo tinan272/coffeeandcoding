@@ -25,6 +25,10 @@ import {
     ArrayParam,
 } from "use-query-params";
 
+export const convertCost = (repeatCount) => {
+        return "$".repeat(repeatCount);
+    };
+
 export const ShopListDisplay = ({
     searchInputValue,
     selectedFilterValues,
@@ -141,10 +145,6 @@ export const ShopListDisplay = ({
             const prevPage = currPage - 1;
             goToPage(prevPage);
         }
-    };
-
-    const convertCost = (repeatCount) => {
-        return "$".repeat(repeatCount);
     };
     
     // coffee shop popup
@@ -288,10 +288,12 @@ export const ShopListDisplay = ({
                     area: cafe.Area,
                     wifi: cafe.Wifi,
                     parking_type: cafe.Parking_Type,
+                    individual_ratings: cafe.Rating,
                     overall_rating: cafe.AvgOverallRating,
                     ambiance_rating: cafe.AvgAmbianceRating,
                     coffee_rating: cafe.AvgCoffeeRating,
                     service_rating: cafe.AvgServiceRating,
+                    row_boolean: cafe.RowBoolean,
                 };
             });
             // console.log("type of", typeof cafes[0].rating);

@@ -10,6 +10,7 @@ async function getCafes(client) {
 
     const database = await client.db("coffee_shop_data");
     const collection = await database.collection("coffee_info");
+    
 
     const ratings_info_pipeline = [
         {
@@ -38,11 +39,12 @@ async function getCafes(client) {
                 Wifi: { $first: "$Wifi" },
                 Area: { $first: "$Area" },
                 Parking_Type: { $first: "$Parking_Type" },
-                Rating: { $push: "$Ratings" }, //push: collects individual docs for each coffee shop
+                Rating: { $push: "$Rating" }, //push: collects individual docs for each coffee shop
                 AvgOverallRating: { $avg: "$Rating.Overall_Rating" }, // avg: calcs avg of field from all docs for each shop
                 AvgAmbianceRating: { $avg: "$Rating.Ambiance_Rating" },
                 AvgCoffeeRating: { $avg: "$Rating.Coffee_Rating" },
                 AvgServiceRating: { $avg: "$Rating.Service_Rating" },
+                RowBoolean: { $first: "$Rating.Row_Boolean"},
             },
         },
         {
@@ -57,11 +59,12 @@ async function getCafes(client) {
                 Wifi: 1,
                 Area: 1,
                 Parking_Type: 1,
-                Ratings: 1,
+                Rating: 1,
                 AvgOverallRating: 1,
                 AvgAmbianceRating: 1,
                 AvgCoffeeRating: 1,
                 AvgServiceRating: 1,
+                RowBoolean: 1,
             },
         },
     ];
@@ -92,12 +95,6 @@ async function getCafes(client) {
     const default_start_page = 1;
     const default_cafe_limit = 5;
 
-    if (!combinedCollection) {
-        return res
-            .status(500)
-            .json({ error: "Database connection not established" });
-    }
-
     router.get("/", async (req, res) => {
         try {
             const page = parseInt(req.query.page, 10) || default_start_page;
@@ -106,55 +103,47 @@ async function getCafes(client) {
 
             // query params sent from frontend
             const filters = {
-                search: req.query.search || "",
-                city: req.query.city || [],
-                cost: req.query.cost || [],
-                parking: req.query.parking || [],
-                rating: req.query.rating || [],
+                search: req.query.search,
+                city: req.query.city,
+                cost: req.query.cost,
+                parking: req.query.parking,
+                rating: req.query.rating,
             };
-            const sort = req.query.sort || "";
+            const sort = req.query.sort;
 
-            console.log("Query Parameters:", filters, "Sort:", sort);
+            console.log("Query Parameters:");
+            console.log("Search:", filters.search);
+            console.log("Sort:", sort);
+            console.log("City:", filters.city);
+            console.log("Cost:", filters.cost);
+            console.log("Parking:", filters.parking);
+            console.log("Rating:", filters.rating);
+            console.log("router working");
 
             // creating query object to filter documents
             const query = {};
-
+            // filtering documents based on search value
             if (filters.search) {
                 query["$or"] = [
                     { Name: { $regex: filters.search, $options: "i" } },
                     { Address: { $regex: filters.search, $options: "i" } },
                 ];
             }
-
-            if (filters.city && filters.city.length > 0) {
-                query["Area"] = {
-                    $in: Array.isArray(filters.city)
-                        ? filters.city
-                        : [filters.city],
-                };
+            // filtering based on city value
+            if (filters.city) {
+                query["Area"] = { $in: filters.city };
             }
-
-            if (filters.cost && filters.cost.length > 0) {
-                query["Cost"] = {
-                    $in: Array.isArray(filters.cost)
-                        ? filters.cost
-                        : [filters.cost],
-                };
+            // filtering based on cost
+            if (filters.cost) {
+                query["Cost"] = { $in: filters.cost };
             }
-
-            if (filters.rating && filters.rating.length > 0) {
-                const ratingNumbers = Array.isArray(filters.rating)
-                    ? filters.rating.map(Number)
-                    : [Number(filters.rating)];
+            if (filters.rating) {
+                const ratingNumbers = filters.rating.map(Number);
                 query["AvgOverallRating"] = { $in: ratingNumbers };
             }
-
+            // filtering based on parking type
             if (filters.parking && filters.parking.length > 0) {
-                const regexArray = (
-                    Array.isArray(filters.parking)
-                        ? filters.parking
-                        : [filters.parking]
-                ).map((parkingType) => ({
+                const regexArray = filters.parking.map((parkingType) => ({
                     Parking_Type: { $regex: parkingType, $options: "i" },
                 }));
                 query["$and"] = regexArray;
@@ -163,14 +152,7 @@ async function getCafes(client) {
             // pagination pipeline
             const articles = [
                 { $match: query },
-                {
-                    $sort:
-                        sort === "rating"
-                            ? { AvgOverallRating: -1 }
-                            : sort === "cost"
-                            ? { Cost: -1 }
-                            : { _id: 1 },
-                },
+                { $sort: { AvgOverallRating: -1 } },
                 {
                     $facet: {
                         metadata: [{ $count: "totalCount" }],
@@ -182,47 +164,32 @@ async function getCafes(client) {
                 },
             ];
 
-            // Ensure the database connection is established
-            if (!combinedCollection) {
-                throw new Error("Database connection not established");
-            }
-
+            //TODO: access overall rating to compare with
+            // filtering documents and sending to api endpoint
             const filteredResults = await combinedCollection
                 .aggregate(articles)
                 .toArray();
 
-            if (!filteredResults || filteredResults.length === 0) {
-                return res.json({
-                    cafes: [],
-                    totalPages: 0,
-                    currentPage: page,
-                    pageSize: pageSize,
-                    totalCount: 0,
-                });
-            }
-
             const totalCount = filteredResults[0].metadata[0]
                 ? filteredResults[0].metadata[0].totalCount
                 : 0;
+            console.log("testing filter on area and cost", filteredResults);
 
             const response = {
-                cafes: filteredResults[0].data || [],
+                cafes: filteredResults[0].data,
                 totalPages: Math.ceil(totalCount / pageSize),
                 currentPage: page,
                 pageSize: pageSize,
                 totalCount: totalCount,
             };
-
             res.json(response);
         } catch (error) {
-            console.error("Error in GET / route:", error);
+            console.error("error getting documents", error);
             res.status(500).json({
                 error: "An error occurred while fetching the cafes.",
-                details: error.message,
             });
         }
     });
-
     return router;
 }
 

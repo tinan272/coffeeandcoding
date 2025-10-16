@@ -7,6 +7,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { SelectMulti } from "./SelectMulti";
+import { convertCost } from "./ShopListDisplay";
 import { Button, ListSubheader, ThemeProvider, Typography } from "@mui/material";
 import theme from "./theme.jsx";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -49,6 +50,8 @@ export const CoffeeShopPopup = ({
 
     const handleToggle = (event) => {
         setChecked(event.target.checked);
+
+
     };
     console.log(checked);
 
@@ -123,13 +126,15 @@ export const CoffeeShopPopup = ({
             setWifi("unknown");
         }
         setArea(cafe ? cafe.area : "");
-        setRating(cafe ? cafe.rating : "");
+        setRating(cafe ? cafe.individual_ratings : "");
         setAvgOverall(cafe ? cafe.overall_rating : "");
         setAvgAmbiance(cafe ? cafe.ambiance_rating : "");
         setAvgCoffee(cafe ? cafe.coffee_rating : "");
         setAvgService(cafe ? cafe.service_rating : "");
+
         console.log(cafe);
         console.log(cafeWifi);
+        console.log(cafeRating[0]);
 
     },[cafe]);
 
@@ -187,7 +192,7 @@ export const CoffeeShopPopup = ({
 
                                                         <div className="flex flex-col">
                                                             <span className="font-bold text-black-700">{"Cost"}</span>
-                                                            <span className=" text-gray-500 text-center">{cafeCost}</span>
+                                                            <span className=" text-gray-500 text-center">{convertCost(cafeCost)}</span>
                                                         </div>
                                                 
                                                         <div className="flex mx-4">
